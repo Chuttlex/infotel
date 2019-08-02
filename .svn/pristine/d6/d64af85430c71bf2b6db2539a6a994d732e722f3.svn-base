@@ -1,0 +1,87 @@
+package com.infotel.entity;
+
+import java.io.Serializable;
+import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * The persistent class for the domaine database table.
+ * 
+ */
+@Entity
+@Table(name="domaine")
+@NamedQuery(name="Domaine.findAll", query="SELECT d FROM Domaine d")
+public class Domaine implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique=true, nullable=false)
+	private int id;
+
+	@Column(nullable=false, length=45)
+	private String valeur;
+
+	//bi-directional many-to-one association to Competence
+	@OneToMany(mappedBy="domaine",cascade = CascadeType.ALL)
+	private List<Competence> competences= new ArrayList<>();
+
+	public Domaine() {
+	}
+
+	public Domaine(String valeur) {
+		// TODO Auto-generated constructor stub
+		this.valeur=valeur;
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getValeur() {
+		return this.valeur;
+	}
+
+	public void setValeur(String valeur) {
+		this.valeur = valeur;
+	}
+
+	public List<Competence> getCompetences() {
+		return this.competences;
+	}
+
+	public void setCompetences(List<Competence> competences) {
+		this.competences = competences;
+	}
+
+	public Competence addCompetence(Competence competence) {
+		getCompetences().add(competence);
+		competence.setDomaine(this);
+
+		return competence;
+	}
+
+	public Competence removeCompetence(Competence competence) {
+		getCompetences().remove(competence);
+		competence.setDomaine(null);
+
+		return competence;
+	}
+
+	@Override
+	public String toString() {
+		String text = "Domaine [id=" + id + ", valeur=" + valeur + ", competences=";
+		for(Competence c : competences) {
+			text+=c.getId()+" "+c.getNom()+";";
+		}
+		return text+" ]";
+	}
+
+}

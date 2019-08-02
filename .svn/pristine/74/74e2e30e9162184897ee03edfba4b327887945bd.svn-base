@@ -1,0 +1,81 @@
+package com.infotel.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data/ressourcehascompetence")
+public class DataGetRessourcehascompetenceController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RessourcehascompetenceService rcService;
+	
+	public DataGetRessourcehascompetenceController(RessourcehascompetenceService rcService) {
+		this.rcService=rcService;
+	}
+	
+	@GetMapping("/ByRessource={nom}&{prenom}")
+	public ResponseEntity<?> getByRessource(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByRessource(nom, prenom);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByCompetence={nom}")
+	public ResponseEntity<?> getByCompetence(@PathVariable("nom") String nom){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByCompetence(nom);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByNiveau={niveau}&{orgnom}")
+	public ResponseEntity<?> getByNiveau(@PathVariable("niveau") int valeur, @PathVariable("orgnom") String orgnom){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByNiveau(valeur,orgnom);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByRessourceAndCompetence={nom}&{prenom}&{cnom}")
+	public ResponseEntity<?> getByRessourceAndCompetence(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom,
+			@PathVariable("cnom") String cnom){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByRessourceAndCompetence(nom,prenom,cnom);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByDateEvol={date}")
+	public ResponseEntity<?> getByDateEvol(@PathVariable("date") Date date){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByDateEvol(date);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByRessourceAndDateEvol={nom}&{prenom}&{date}")
+	public ResponseEntity<?> getByRessourceAndDateEvol(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom,
+			@PathVariable("date") Date date){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByRessourceAndDateEvol(nom,prenom,date);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByCompetenceAndDateEvol={nom}&{date}")
+	public ResponseEntity<?> getByCompetenceAndDateEvol(@PathVariable("nom") String nom,@PathVariable("date") Date date){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByCompetenceAndDateEvol(nom,date);
+		return ResponseEntity.ok(rcs);
+	}
+	
+	@GetMapping("/ByRessourceAndCompetenceAndDateEvol={nom}&{prenom}&{cnom}&{date}")
+	public ResponseEntity<?> getByRessourceAndCompetenceAndDateEvol(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom,
+			@PathVariable("cnom") String cnom,@PathVariable("date") Date date){
+		List<RessourcehascompetenceDTO> rcs = rcService.getByRessourceAndCompetenceAndDateEvol(nom,prenom,cnom,date);
+		return ResponseEntity.ok(rcs);
+	}
+}

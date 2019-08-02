@@ -1,0 +1,30 @@
+package com.infotel.repository;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.infotel.entity.Competence;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.entity.RessourcehascompetencePK;
+
+@Repository
+public interface RessourcehascompetenceRepository extends CrudRepository<Ressourcehascompetence, Integer> {
+	ArrayList<Ressourcehascompetence> findByressource(Ressource ressource);
+	ArrayList<Ressourcehascompetence> findBycompetence(Competence competence);
+	ArrayList<Ressourcehascompetence> findByniveau(Niveau niveau);
+	ArrayList<Ressourcehascompetence> findByRessourceAndCompetence(Ressource ressource, Competence competence);
+	ArrayList<Ressourcehascompetence> findByRessourceAndNiveau(Ressource ressource, Niveau niveau);
+	ArrayList<Ressourcehascompetence> findByNiveauAndCompetence(Niveau niveau, Competence competence);
+	Ressourcehascompetence findByRessourceAndCompetenceAndNiveau(Ressource ressource, Competence competence, Niveau niveau);
+	ArrayList<Ressourcehascompetence> findAll();
+	ArrayList<Ressourcehascompetence> findByDateevolcomp(Date evol);
+	ArrayList<Ressourcehascompetence> findByRessourceAndDateevolcomp(Ressource ressource,Date evol);
+	ArrayList<Ressourcehascompetence> findByCompetenceAndDateevolcomp(Competence competence,Date evol);
+	ArrayList<Ressourcehascompetence> findByRessourceAndCompetenceAndDateevolcomp(Ressource ressource,Competence competence,Date evol);
+	Ressourcehascompetence findById(RessourcehascompetencePK id);
+}

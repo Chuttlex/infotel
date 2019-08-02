@@ -1,0 +1,66 @@
+package com.infotel.entity;
+
+import java.io.Serializable;
+import javax.persistence.*;
+
+/**
+ * The primary key class for the ressourcehascompetence database table.
+ * 
+ */
+@Embeddable
+public class RessourcehascompetencePK implements Serializable {
+	//default serial version id, required for serializable classes.
+	private static final long serialVersionUID = 1L;
+
+	@Column(insertable=false, updatable=false, nullable=false)
+	private int idressource;
+
+	@Column(insertable=false, updatable=false, nullable=false)
+	private int idcompetence;
+
+	public RessourcehascompetencePK() {
+	}
+	public RessourcehascompetencePK(int idr, int idc) {
+		this.idressource=idr;this.idcompetence=idc;
+	}
+	public int getIdressource() {
+		return this.idressource;
+	}
+	public void setIdressource(int idressource) {
+		this.idressource = idressource;
+	}
+	public int getIdcompetence() {
+		return this.idcompetence;
+	}
+	public void setIdcompetence(int idcompetence) {
+		this.idcompetence = idcompetence;
+	}
+
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof RessourcehascompetencePK)) {
+			return false;
+		}
+		RessourcehascompetencePK castOther = (RessourcehascompetencePK)other;
+		return 
+			(this.idressource == castOther.idressource)
+			&& (this.idcompetence == castOther.idcompetence);
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int hash = 17;
+		hash = hash * prime + this.idressource;
+		hash = hash * prime + this.idcompetence;
+		
+		return hash;
+	}
+	
+	@Override
+	public String toString() {
+		return "RessourcehascompetencePK [idressource=" + idressource + ", idcompetence=" + idcompetence + "]";
+	}
+	
+}

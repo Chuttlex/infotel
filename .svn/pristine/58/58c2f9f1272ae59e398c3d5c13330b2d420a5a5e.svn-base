@@ -1,0 +1,102 @@
+package com.infotel.dto;
+
+import java.util.Date;
+
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.entity.RessourcehascompetencePK;
+
+public class RessourcehascompetenceDTO {
+	private int idr;
+	private int idc;
+	private String cnom;
+	private String rnom;
+	private String rprenom;
+	private int niveau;
+	private String organisme;
+	private Date dateevolcomp;
+	
+	public RessourcehascompetenceDTO() {
+		this.cnom="";this.rnom="";this.rprenom="";this.niveau=0;this.organisme="";this.organisme="";
+		this.dateevolcomp=new Date();
+	}
+	
+	public RessourcehascompetenceDTO(String cnom, String rnom, String rprenom, int niveau, String organisme,
+			Date dateevolcomp) {
+		this.cnom = cnom;
+		this.rnom = rnom;
+		this.rprenom = rprenom;
+		this.niveau = niveau;
+		this.organisme = organisme;
+		this.dateevolcomp = dateevolcomp;
+	}
+
+	public int getIdr() {
+		return idr;
+	}
+
+	public void setIdr(int idr) {
+		this.idr = idr;
+	}
+
+	public int getIdc() {
+		return idc;
+	}
+
+	public void setIdc(int idc) {
+		this.idc = idc;
+	}
+
+	public String getCnom() {
+		return cnom;
+	}
+
+	public void setCnom(String cnom) {
+		this.cnom = cnom;
+	}
+
+	public String getRnom() {
+		return rnom;
+	}
+
+	public void setRnom(String rnom) {
+		this.rnom = rnom;
+	}
+
+	public String getRprenom() {
+		return rprenom;
+	}
+
+	public void setRprenom(String rprenom) {
+		this.rprenom = rprenom;
+	}
+
+	public int getNiveau() {
+		return niveau;
+	}
+
+	public void setNiveau(int niveau) {
+		this.niveau = niveau;
+	}
+
+	public String getOrganisme() {
+		return organisme;
+	}
+
+	public void setOrganisme(String organisme) {
+		this.organisme = organisme;
+	}
+
+	public Date getDateevolcomp() {
+		return dateevolcomp;
+	}
+
+	public void setDateevolcomp(Date dateevolcomp) {
+		this.dateevolcomp = dateevolcomp;
+	}
+
+	public Ressourcehascompetence toEntity() {
+		Ressourcehascompetence rc = new Ressourcehascompetence(dateevolcomp);
+		rc.setId(new RessourcehascompetencePK(idr, idc));
+		return rc;
+	}
+}

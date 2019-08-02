@@ -1,0 +1,31 @@
+package com.infotel.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.DispositifDTO;
+import com.infotel.service.DispositifService;
+
+@RestController
+@RequestMapping("/api/data/dispositif")
+public class DataGetDispositifController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispService;
+	
+	public DataGetDispositifController(DispositifService dispService) {
+		this.dispService=dispService;
+	}
+	
+	@GetMapping("/ByNom={nom}")
+	public ResponseEntity<?> getByNom(@PathVariable("nom") String nom){
+		DispositifDTO dispositif = dispService.getByNom(nom);
+		return ResponseEntity.ok(dispositif);
+	}
+
+}

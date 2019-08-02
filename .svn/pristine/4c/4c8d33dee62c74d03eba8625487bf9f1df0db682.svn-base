@@ -1,0 +1,187 @@
+package com.infotel.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.service.OrganismeService;
+import com.infotel.service.AutoCompleteService;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DispositifhascompetenceService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel")
+public class DataClearController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	private final DomaineService domaineService;
+	private final AutoCompleteService acService;
+	private final DispositifhascompetenceService dcService;
+	
+	public DataClearController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService,
+			AutoCompleteService acService, DispositifhascompetenceService dcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+		this.domaineService=domaineService;this.acService=acService;this.dcService=dcService;
+	}
+	
+	@DeleteMapping("/clearDispositifs")
+	public ResponseEntity<?> clearDispositifs(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		dispositifService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearDomaines")
+	public ResponseEntity<?> clearDomaines(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		domaineService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearOrganismes")
+	public ResponseEntity<?> clearOrganismes(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		organismeService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearNiveaux")
+	public ResponseEntity<?> clearNiveaux(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		niveauService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearEquipes")
+	public ResponseEntity<?> clearEquipes(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		equipeService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearRessources")
+	public ResponseEntity<?> clearRessources(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		resService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearHistoriques")
+	public ResponseEntity<?> clearHistoriques(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		histService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearCompetences")
+	public ResponseEntity<?> clearCompetences(){
+		HttpHeaders headers = new HttpHeaders();
+	//headers.add("Access-Control-Allow-Origin", "*");
+	headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+	headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+	headers.add("Access-Control-Allow-Credentials", "true");
+		compService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearRegles")
+	public ResponseEntity<?> clearRegles(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		regleService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearRessourcehascompetences")
+	public ResponseEntity<?> clearRessourcehascompetences(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		rcService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearAutoCompletes")
+	public ResponseEntity<?> clearAutoComplete(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		acService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/clearDispositifhascompetence")
+	public ResponseEntity<?> clearDispositifhascompetences(){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		dcService.clear();
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+
+}

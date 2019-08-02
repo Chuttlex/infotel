@@ -1,0 +1,116 @@
+package com.infotel.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.CompetenceDTO;
+import com.infotel.data.dto.DispositifDTO;
+import com.infotel.data.dto.DomaineDTO;
+import com.infotel.data.dto.EquipeDTO;
+import com.infotel.data.dto.HistoriqueresDTO;
+import com.infotel.data.dto.NiveauDTO;
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.dto.RegleDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.data.service.OrganismeService;
+import com.infotel.entity.RessourcehascompetencePK;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data")
+public class DataGetByIdController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataGetByIdController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@GetMapping("/getDispositifById={id}")
+	public ResponseEntity<?> getDispositifById(@PathVariable("id") int id){
+		DispositifDTO dispositif = dispositifService.getById(id);
+		return ResponseEntity.ok(dispositif);
+	}
+	
+	@GetMapping("/getOrganismeById={id}")
+	public ResponseEntity<?> getOrganismeById(@PathVariable("id") int id){
+		OrganismeDTO organisme = organismeService.getById(id);
+		return ResponseEntity.ok(organisme);
+	}
+	
+	@GetMapping("/getEquipeById={id}")
+	public ResponseEntity<?> getEquipeById(@PathVariable("id") int id){
+		EquipeDTO equipe = equipeService.getById(id);
+		return ResponseEntity.ok(equipe);
+	}
+	
+	@GetMapping("/getNiveauById={id}")
+	public ResponseEntity<?> getNiveauById(@PathVariable("id") int id){
+		NiveauDTO niveau = niveauService.getById(id);
+		return ResponseEntity.ok(niveau);
+	}
+	
+	@GetMapping("/getRessourceById={id}")
+	public ResponseEntity<?> getRessourceById(@PathVariable("id") int id){
+		RessourceDTO ressource = resService.getById(id);
+		return ResponseEntity.ok(ressource);
+	}
+	
+	@GetMapping("/getHistoriqueById={id}")
+	public ResponseEntity<?> getHistoriqueById(@PathVariable("id") int id){
+		HistoriqueresDTO hist = histService.getById(id);
+		return ResponseEntity.ok(hist);
+	}
+	
+	@GetMapping("/getDomaineById={id}")
+	public ResponseEntity<?> getDomaineById(@PathVariable("id") int id){
+		DomaineDTO domaine = domaineService.getById(id);
+		return ResponseEntity.ok(domaine);
+	}
+	
+	@GetMapping("/getCompetenceById={id}")
+	public ResponseEntity<?> getCompetenceById(@PathVariable("id") int id){
+		CompetenceDTO competence = compService.getById(id);
+		return ResponseEntity.ok(competence);
+	}
+	
+	@GetMapping("/getRegleById={id}")
+	public ResponseEntity<?> getRegleById(@PathVariable("id") int id){
+		RegleDTO regle = regleService.getById(id);
+		return ResponseEntity.ok(regle);
+	}
+	
+	@GetMapping("/getRessourcehascompetenceById={id}")
+	public ResponseEntity<?> getRessourcehascompetenceById(@PathVariable("id") RessourcehascompetencePK id){
+		RessourcehascompetenceDTO rc = rcService.getById(id);
+		return ResponseEntity.ok(rc);
+	}
+}

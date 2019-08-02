@@ -1,0 +1,58 @@
+package com.infotel.dto;
+
+import com.infotel.entity.Competence;
+
+public class CompetenceDTO {
+	private int id;
+	private String nom;
+	private String domaine;
+	private String dispositif;
+	
+	public CompetenceDTO() {
+		this.nom="";this.domaine="";this.dispositif="";
+	}
+	
+	public CompetenceDTO(String nom, String domaine,String dispositif) {
+		this.nom = nom;
+		this.domaine = domaine;
+		this.dispositif = dispositif;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public String getDomaine() {
+		return domaine;
+	}
+
+	public void setDomaine(String domaine) {
+		this.domaine = domaine;
+	}
+
+	public String getDispositif() {
+		return dispositif;
+	}
+
+	public void setDispositif(String dispositif) {
+		this.dispositif = dispositif;
+	}
+
+	public Competence toEntity() {
+		Competence comp = new Competence(nom);
+		comp.setId(id);
+		return comp;
+	}
+}

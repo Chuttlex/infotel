@@ -1,0 +1,69 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+
+import com.infotel.dto.DomaineDTO;
+import com.infotel.entity.Domaine;
+import com.infotel.repository.DomaineRepository;
+
+public class DomaineService {
+	
+	private final DomaineRepository domaineRep;
+	private final CompetenceService compService;
+	
+	public DomaineService(DomaineRepository domaineRep, CompetenceService compService) {
+		this.domaineRep=domaineRep;this.compService=compService;
+	}
+	
+	public void clear() {
+		domaineRep.deleteAll();
+	}
+	
+	public void create(DomaineDTO domaine) {
+		domaineRep.save(domaine.toEntity());
+	}
+	
+	public ArrayList<DomaineDTO> getAll(){
+		ArrayList<DomaineDTO> list=new ArrayList<>();
+		for(Domaine d : domaineRep.findAll()) {
+			list.add(new DomaineDTO(d));
+		}
+		return list;
+	}
+	
+	public DomaineDTO getById(int id)  {
+		Domaine d = domaineRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			return new DomaineDTO(d);
+		}
+	}
+	
+	public DomaineDTO update(int id,DomaineDTO domaine)  {
+		Domaine d = domaineRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setCompetences(domaine.getCompetences());
+			d.setValeur(domaine.getValeur());
+			Domaine f = domaineRep.save(d);
+			return new DomaineDTO(f);
+		}
+	}
+	
+	public void delete(int id)  {
+		Domaine d = domaineRep.findByid(id);
+		if(d!=null)
+			domaineRep.delete(d);
+	}
+	
+	public DomaineDTO getByNom(String nom) {
+		return new DomaineDTO(domaineRep.findByvaleur(nom));
+	}
+	
+	public DomaineDTO getByCompetence(String nom) {
+		return new DomaineDTO(compService.getByNom(nom).getDomaine());
+	}
+
+}

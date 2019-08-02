@@ -1,0 +1,156 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.dto.RessourcehascompetenceDTO;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.service.RessourcehascompetenceService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel/ressourcehascompetence")
+public class DataGetRessourcehascompetenceController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RessourcehascompetenceService rcService;
+	
+	public DataGetRessourcehascompetenceController(RessourcehascompetenceService rcService) {
+		this.rcService=rcService;
+	}
+	
+	@GetMapping("/ByRessource")
+	public ResponseEntity<?> getByRessource(@RequestBody String nom,@RequestBody String prenom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByRessource(nom, prenom);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetence")
+	public ResponseEntity<?> getByCompetence(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByCompetence(nom);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByNiveau")
+	public ResponseEntity<?> getByNiveau(@RequestBody int valeur, @RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByNiveau(valeur,orgnom);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessourceAndCompetence")
+	public ResponseEntity<?> getByRessourceAndCompetence(@RequestBody String nom,@RequestBody String prenom,
+			@RequestBody String cnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByRessourceAndCompetence(nom,prenom,cnom);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByDateEvol")
+	public ResponseEntity<?> getByDateEvol(@RequestBody Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByDateEvol(date);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessourceAndDateEvol")
+	public ResponseEntity<?> getByRessourceAndDateEvol(@RequestBody String nom,@RequestBody String prenom,
+			@RequestBody Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByRessourceAndDateEvol(nom,prenom,date);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndDateEvol")
+	public ResponseEntity<?> getByCompetenceAndDateEvol(@RequestBody String nom,@RequestBody Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByCompetenceAndDateEvol(nom,date);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessourceAndCompetenceAndDateEvol")
+	public ResponseEntity<?> getByRessourceAndCompetenceAndDateEvol(@RequestBody String nom,@RequestBody String prenom,
+			@RequestBody String cnom,@RequestBody Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressourcehascompetence> rcs = rcService.getByRessourceAndCompetenceAndDateEvol(nom,prenom,cnom,date);
+		List<RessourcehascompetenceDTO> rcsDTO = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcs) {
+			rcsDTO.add(rc.toDTO());
+		}
+		return new ResponseEntity<>(rcsDTO,headers,HttpStatus.OK);
+	}
+}

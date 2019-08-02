@@ -1,0 +1,152 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.dto.RessourceDTO;
+import com.infotel.entity.Ressource;
+import com.infotel.service.RessourceService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel/ressource")
+public class DataGetRessourceController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RessourceService resService;
+	
+	public DataGetRessourceController(RessourceService resService) {
+		this.resService=resService;
+	}
+	
+	@GetMapping("/ByNomAndPrenom={nom}&{prenom}")
+	public ResponseEntity<?> getByNomAndPrenom(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Ressource ressource = resService.getByNomAndPrenom(nom,prenom);
+		return new ResponseEntity<>(ressource.toDTO(),headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipe={nom}")
+	public ResponseEntity<?> getByEquipe(@PathVariable("nom") String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByEquipe(nom);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveau={nom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByCompetenceAndNiveau(@PathVariable("nom") String cnom,@PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByCompetenceAndNiveau(cnom,valeur,orgnom);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetence={nom}")
+	public ResponseEntity<?> getByCompetence(@PathVariable("nom") String cnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByCompetence(cnom);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByIsActif={actif}")
+	public ResponseEntity<?> getByIsActif(@PathVariable("actif") boolean actif){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByIsActif(actif);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByIsActifAsBackUp={actif}")
+	public ResponseEntity<?> getByIsActifAsBackUp(@PathVariable("actif") boolean actif){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByIsActifAsBackUp(actif);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByDateentree={date}")
+	public ResponseEntity<?> getByDateEntree(@PathVariable("date") Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByDateentree(date);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByDatesortie={date}")
+	public ResponseEntity<?> getByDateSortie(@PathVariable("date") Date date){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Ressource> ressources = resService.getByDatesortie(date);
+		List<RessourceDTO> ressourcesDTO = new ArrayList<>();
+		for(Ressource r: ressources) {
+			ressourcesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(ressourcesDTO,headers,HttpStatus.OK);
+	}
+
+}

@@ -1,0 +1,194 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.*;
+import com.infotel.data.service.*;
+import com.infotel.data.transfertentity.TransfertCompetence;
+import com.infotel.data.transfertentity.TransfertDispositif;
+import com.infotel.data.transfertentity.TransfertEquipe;
+import com.infotel.data.transfertentity.TransfertHistorique;
+import com.infotel.data.transfertentity.TransfertNiveau;
+import com.infotel.data.transfertentity.TransfertOrganisme;
+import com.infotel.data.transfertentity.TransfertRegle;
+import com.infotel.data.transfertentity.TransfertRessource;
+import com.infotel.data.transfertentity.TransfertRessourcehascompetence;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+
+@RestController
+@RequestMapping("/api/data")
+public class DataCreateController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataCreateController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@PostMapping("/initialize")
+	public ResponseEntity<?> initialize(){
+		dispositifService.initialize();
+		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/createDispositif")
+	public ResponseEntity<?> createDispositif(@Valid @RequestBody TransfertDispositif disp){
+		DispositifDTO d = new DispositifDTO();
+		d.setId(disp.getId());
+		d.setDescription(disp.getDescription());
+		d.setNom(disp.getNom());
+		OrganismeDTO org = organismeService.getByNom(disp.getOrganisme());
+		d.setOrganisme(org.toEntity());
+		dispositifService.create(d);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createOrganisme")
+	public ResponseEntity<?> createOrganisme(@Valid @RequestBody TransfertOrganisme org){
+		OrganismeDTO o = new OrganismeDTO();
+		o.setId(org.getId());
+		o.setDescription(org.getDescription());
+		o.setOrganisme(org.getOrganisme());
+		DispositifDTO disp = dispositifService.getByNom(org.getdispositif());
+		o.setDispositif(disp.toEntity());
+		organismeService.create(o, org.getdispositif());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createEquipe")
+	public ResponseEntity<?> createEquipe(@Valid @RequestBody TransfertEquipe equipe){
+		EquipeDTO e = new EquipeDTO();
+		e.setId(equipe.getId());
+		e.setNom(equipe.getNom());
+		e.setRescible(equipe.getRescible());
+		DispositifDTO disp = dispositifService.getByNom(equipe.getDispositif());
+		e.setDispositif(disp.toEntity());
+		equipeService.create(e,equipe.getDispositif());
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createNiveau")
+	public ResponseEntity<?> createNiveau(@Valid @RequestBody TransfertNiveau niveau){
+		NiveauDTO n = new NiveauDTO();
+		n.setId(niveau.getId());
+		n.setDescription(niveau.getDescription());
+		n.setValeur(niveau.getValue());
+		OrganismeDTO org = organismeService.getByNom(niveau.getOrganisme());
+		n.setOrganisme(org.toEntity());
+		niveauService.create(n,niveau.getOrganisme());
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createRessource")
+	public ResponseEntity<?> createRessource(@Valid @RequestBody TransfertRessource res){
+		RessourceDTO r = new RessourceDTO();
+		r.setId(res.getId());
+		r.setNom(res.getNom());
+		r.setPrenom(res.getPrenom());
+		r.setReferenceclient(res.getReferenceClient());
+		EquipeDTO equipe = equipeService.getByNom(res.getEquipe());
+		r.setEquipe(equipe.toEntity());
+		resService.create(r,res.getEquipe());
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createHistorique")
+	public ResponseEntity<?> createHistorique(@Valid @RequestBody TransfertHistorique hist){
+		HistoriqueresDTO h = new HistoriqueresDTO();
+		h.setId(hist.getId());
+		h.setDateentree(hist.getDateentree());
+		h.setDatesortie(hist.getDatesortie());
+		h.setIsactif(hist.isActif());
+		h.setisactiveasbackup(hist.isActifAsBackUp());
+		RessourceDTO res = resService.getByNomAndPrenom(hist.getResNom(), hist.getResPrenom());
+		h.setRessource(res.toEntity());
+		histService.create(h, hist.getResNom(), hist.getResPrenom());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createCompetence")
+	public ResponseEntity<?> createCompetence(@Valid @RequestBody TransfertCompetence competence){
+		CompetenceDTO c = new CompetenceDTO();
+		c.setId(competence.getId());
+		c.setNom(competence.getNom());
+		DomaineDTO domaine = domaineService.getByNom(competence.getDomaine());
+		c.setDomaine(domaine.toEntity());
+		compService.create(c, competence.getDomaine());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createRegle")
+	public ResponseEntity<?> createRegle(@Valid @RequestBody TransfertRegle regle){
+		RegleDTO r = new RegleDTO();
+		r.setId(regle.getId());
+		r.setMoyenne(regle.isMoyenne());
+		r.setNombre(regle.getNombre());
+		r.setPourcentage(regle.getPourcentage());
+		CompetenceDTO comp = compService.getByNom(regle.getCompetence());
+		r.setCompetence(comp.toEntity());
+		EquipeDTO equipe = equipeService.getByNom(regle.getEquipe());
+		r.setEquipe(equipe.toEntity());
+		List<NiveauDTO> niveaux = niveauService.getByOrganisme(regle.getOrganisme());
+		for(NiveauDTO niveau: niveaux) {
+			if(niveau.getValeur()==regle.getNiveau())
+				r.setNiveau(niveau.toEntity());
+		}
+		regleService.create(r, regle.getEquipe(), regle.getCompetence(),
+				regle.getOrganisme(), regle.getNiveau());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping("/createRessourcehascompetence")
+	public ResponseEntity<?> createRessourcehascompetence(@Valid @RequestBody TransfertRessourcehascompetence rc){
+		RessourcehascompetenceDTO r = new RessourcehascompetenceDTO();
+		r.setId(rc.getId());
+		r.setDateevolcomp(rc.getDateevolcomp());
+		CompetenceDTO comp = compService.getByNom(rc.getCompetence());
+		r.setCompetence(comp.toEntity());
+		RessourceDTO res = resService.getByNomAndPrenom(rc.getResNom(), rc.getResPrenom());
+		r.setRessource(res.toEntity());
+		List<NiveauDTO> niveaux = niveauService.getByOrganisme(rc.getOrganisme());
+		for(NiveauDTO niveau: niveaux) {
+			if(niveau.getValeur()==rc.getNiveau())
+				r.setNiveau(niveau.toEntity());
+		}
+		rcService.create(r, rc.getResNom(), rc.getResPrenom(),
+				rc.getCompetence(), rc.getOrganisme(),
+				rc.getNiveau());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+}

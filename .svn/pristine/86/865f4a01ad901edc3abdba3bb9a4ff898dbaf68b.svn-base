@@ -1,0 +1,157 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.infotel.entity.Competence;
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Historiqueres;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.repository.RessourceRepository;
+
+@Service
+public class RessourceService {
+	
+	private final RessourceRepository resRep;
+	private final EquipeService equipeService;
+	private final HistoriqueresService histService;
+	private final RessourcehascompetenceService rcService;
+	
+	public RessourceService(RessourceRepository resRep,@Lazy EquipeService equipeService, HistoriqueresService histService,
+			RessourcehascompetenceService rcService) {
+		this.resRep=resRep;this.equipeService=equipeService;this.histService=histService;this.rcService=rcService;
+	}
+	
+	public void clear() {
+		resRep.deleteAll();
+	}
+	
+	public void create(Ressource ressource) {
+		Equipe equipe = ressource.getEquipe();
+		resRep.save(ressource);
+		List<Ressource> ressources = equipe.getRessources();
+		ressources.add(ressource);
+		equipe.setRessources(ressources);
+		equipeService.update(equipe.getId(), equipe);
+	}
+	
+	public ArrayList<Ressource> getAll(){
+		return resRep.findAll();
+	}
+	
+	public Ressource getById(int id)  {
+		return resRep.findByid(id);
+	}
+	
+	public Historiqueres getHistorique(String nom,String prenom) {
+		return histService.getByRessource(nom, prenom);
+	}
+	
+	public Ressource update(int id,Ressource res)  {
+		Ressource d = resRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setEquipe(res.getEquipe());
+			d.setPrenom(res.getPrenom());
+			d.setReferenceclient(res.getReferenceclient());
+			d.setNom(res.getNom());
+			d.setRessourcehascompetences(res.getRessourcehascompetences());
+			d.setHistoriqueres(res.getHistoriqueres());
+			Ressource f = resRep.save(d);
+			return f;
+		}
+	}
+	
+	public void delete(int id)  {
+		Ressource d = resRep.findByid(id);
+		if(d!=null)
+			resRep.delete(d);
+	}
+	
+	public List<Ressource> getByEquipe(String nom) {
+		Equipe e = equipeService.getByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		List<Ressource> list = new ArrayList<>();
+		for(Ressource r : resRep.findByequipe(e)) {
+			list.add(r);
+		}
+		return list;
+	}
+	
+	// A appliquer sur plusieurs niveaux si on veut les Ressources supérieures à un niveau
+	public List<Ressource> getByCompetenceAndNiveau(String cnom,int valeur,String orgNom) {
+		Competence c=rcService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Equipe> equipes = equipeService.getByNiveau(orgNom, valeur);
+		if(equipes==null)
+			return new ArrayList<>();
+		List<Ressource> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcService.getByCompetence(c)) {
+			for(Equipe e : equipes) {
+				if(rc.getRessource().getEquipe().getNom()==e.getNom())
+					list.add(rc.getRessource());
+			}			
+		}
+		return list;
+	}
+	
+	public List<Ressource> getByCompetence(String cnom) {
+		Competence c=rcService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Ressource> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcService.getByCompetence(c)) {
+			list.add(rc.getRessource());
+		}
+		return list;
+	}
+
+	public Ressource getByNomAndPrenom(String nom, String prenom) {
+		return resRep.findByNomAndPrenom(nom, prenom);
+	}
+	
+	public List<Ressource> getByIsActif(boolean actif){
+		List<Ressource> ressources = new ArrayList<>();
+		for(Historiqueres hist : histService.getAll()) {
+			if(hist.getIsactif()==actif)
+				ressources.add(hist.getRessource());
+		}
+		return ressources;
+	}
+	
+	public List<Ressource> getByIsActifAsBackUp(boolean actif){
+		List<Ressource> ressources = new ArrayList<>();
+		for(Historiqueres hist : histService.getAll()) {
+			if(hist.getIsactiveasbackup()==actif)
+				ressources.add(hist.getRessource());
+		}
+		return ressources;
+	}
+	
+	public List<Ressource> getByDateentree(Date entree){
+		List<Ressource> ressources = new ArrayList<>();
+		for(Historiqueres hist : histService.getAll()) {
+			if(hist.getDateentree().equals(entree))
+				ressources.add(hist.getRessource());
+		}
+		return ressources;
+	}
+	
+	public List<Ressource> getByDatesortie(Date sortie){
+		List<Ressource> ressources = new ArrayList<>();
+		for(Historiqueres hist : histService.getAll()) {
+			if(hist.getDatesortie().equals(sortie))
+				ressources.add(hist.getRessource());
+		}
+		return ressources;
+	}
+
+}

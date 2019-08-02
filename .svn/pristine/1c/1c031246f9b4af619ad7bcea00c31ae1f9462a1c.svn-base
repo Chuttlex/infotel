@@ -1,0 +1,150 @@
+package com.infotel.controller;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.service.OrganismeService;
+import com.infotel.entity.RessourcehascompetencePK;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel")
+public class DataDeleteController {
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataDeleteController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@DeleteMapping("/deleteDispositif")
+	public ResponseEntity<?> deleteDispositif(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		dispositifService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteOrganisme")
+	public ResponseEntity<?> deleteOrganisme(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		organismeService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteEquipe")
+	public ResponseEntity<?> deleteEquipe(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		equipeService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteNiveau")
+	public ResponseEntity<?> deleteNiveau(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		niveauService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteRessource")
+	public ResponseEntity<?> deleteRessource(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		resService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteHistorique")
+	public ResponseEntity<?> deleteHistorique(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		histService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteCompetence")
+	public ResponseEntity<?> deleteCompetence(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		compService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteRegle")
+	public ResponseEntity<?> deleteRegle(@Valid @RequestBody int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		regleService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/deleteRessourcehascompetence")
+	public ResponseEntity<?> deleteRessourcehascompetence(@Valid @RequestBody RessourcehascompetencePK id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		rcService.delete(id);
+		return new ResponseEntity<>(headers,HttpStatus.ACCEPTED);
+	}
+
+}

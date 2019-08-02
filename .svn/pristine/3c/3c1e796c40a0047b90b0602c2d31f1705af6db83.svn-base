@@ -1,0 +1,70 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.infotel.entity.Historiqueres;
+import com.infotel.entity.Ressource;
+import com.infotel.repository.HistoriqueresRepository;
+
+@Service
+public class HistoriqueresService {
+	
+	private final HistoriqueresRepository histRep;
+	private final RessourceService resService;
+	
+	public HistoriqueresService(HistoriqueresRepository histRep,@Lazy RessourceService resService) {
+		this.histRep=histRep;this.resService=resService;
+	}
+	
+	public void clear() {
+		histRep.deleteAll();
+	}
+	
+	public void create(Historiqueres hist, String nom, String prenom) {
+		Ressource res = resService.getByNomAndPrenom(nom,prenom);
+		histRep.save(hist);
+		res.setHistoriqueres(hist);
+		resService.update(res.getId(), res);
+	}
+	
+	public ArrayList<Historiqueres> getAll(){
+		return histRep.findAll();
+	}
+	
+	public Historiqueres getById(int id)  {
+		return histRep.findByid(id);
+	}
+	
+	public Historiqueres update(int id,Historiqueres hist)  {
+		Historiqueres d = histRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setDateentree(hist.getDateentree());
+			d.setDatesortie(hist.getDatesortie());
+			d.setIsactif(hist.getIsactif());
+			d.setIsactiveasbackup(hist.getIsactiveasbackup());
+			d.setRessource(hist.getRessource());
+			Historiqueres f = histRep.save(d);
+			return f;
+		}
+	}
+	
+	public void delete(int id)  {
+		Historiqueres d = histRep.findByid(id);
+		if(d!=null)
+			histRep.delete(d);
+	}
+	
+	public Historiqueres getByRessource(String nom,String prenom)  {
+		Ressource r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return null;
+		return histRep.findByressource(r);
+	}	
+
+}

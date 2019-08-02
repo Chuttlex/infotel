@@ -1,0 +1,148 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.infotel.dto.CompetenceDTO;
+import com.infotel.dto.EquipeDTO;
+import com.infotel.dto.NiveauDTO;
+import com.infotel.dto.OrganismeDTO;
+import com.infotel.dto.RegleDTO;
+import com.infotel.dto.RessourceDTO;
+import com.infotel.dto.RessourcehascompetenceDTO;
+import com.infotel.entity.Organisme;
+import com.infotel.service.OrganismeService;
+import com.infotel.entity.Competence;
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Regle;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.repository.NiveauRepository;
+
+public class NiveauService {
+	
+	private final NiveauRepository niveauRep;
+	private final OrganismeService orgService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public NiveauService(NiveauRepository niveauRep, OrganismeService orgService,RegleService regleService,
+			RessourcehascompetenceService rcService) {
+		this.niveauRep=niveauRep;this.orgService=orgService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	public void clear() {
+		niveauRep.deleteAll();
+	}
+	
+	public void create(NiveauDTO n,String nom) {
+		OrganismeDTO org = orgService.getByNom(nom);
+		niveauRep.save(n.toEntity());
+		List<Niveau> list = org.getNiveaux();
+		list.add(n.toEntity());
+		org.setNiveaux(list);
+		orgService.update(org.getId(), org);
+	}
+	
+	public ArrayList<NiveauDTO> getAll(){
+		ArrayList<NiveauDTO> list=new ArrayList<>();
+		for(Niveau d : niveauRep.findAll()) {
+			list.add(new NiveauDTO(d));
+		}
+		return list;
+	}
+	
+	public NiveauDTO getById(int id)  {
+		Niveau d = niveauRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			return new NiveauDTO(d);
+		}
+	}
+	
+	public NiveauDTO update(int id,NiveauDTO niveau)  {
+		Niveau d = niveauRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setDescription(niveau.getDescription());
+			d.setOrganisme(niveau.getOrganisme());
+			d.setRegles(niveau.getRegles());
+			d.setRessourcehascompetences(niveau.getRessourcehascompetences());
+			d.setValeur(niveau.getValeur());
+			Niveau f = niveauRep.save(d);
+			return new NiveauDTO(f);
+		}
+	}
+	
+	public void delete(int id)  {
+		Niveau d = niveauRep.findByid(id);
+		if(d!=null)
+			niveauRep.delete(d);
+	}
+	
+	public List<NiveauDTO> getByOrganisme(String nom)  {
+		OrganismeDTO org = orgService.getByNom(nom);
+		if(org==null)
+			return new ArrayList<>();
+		List<NiveauDTO> list = new ArrayList<>();
+		for(Niveau n : niveauRep.findByorganisme(org.toEntity())) {
+			list.add(new NiveauDTO(n));
+		}
+		return list;
+	}
+	
+	public List<NiveauDTO> getByValeur(int valeur){
+		ArrayList<NiveauDTO> list = new ArrayList<>();
+		for(Niveau n : niveauRep.findByvaleur(valeur)) {
+			list.add(new NiveauDTO(n));
+		}
+		return list;
+	}
+	
+	public List<NiveauDTO> getByRessourceAndCompetence(String nom,String prenom,String cnom)  {
+		RessourceDTO r = rcService.getRessourceByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return new ArrayList<>();
+		CompetenceDTO c = rcService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<NiveauDTO> list = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcService.getByRessourceAndCompetence(r.toEntity(), c.toEntity())) {
+			list.add(new NiveauDTO(rc.getNiveau()));
+		}
+		return list;
+	}
+	
+	public List<NiveauDTO> getByEquipeAndCompetence(String nom,String cnom)  {
+		EquipeDTO e = regleService.getEquipeByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		CompetenceDTO c = regleService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<NiveauDTO> list = new ArrayList<>();
+		for(RegleDTO r : regleService.getByEquipeAndCompetence(e.toEntity(), c.toEntity())) {
+			list.add(new NiveauDTO(r.getNiveau()));
+		}
+		return list;
+	}
+	
+	public List<NiveauDTO> getByEquipe(String nom){
+		EquipeDTO e = regleService.getEquipeByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		List<NiveauDTO> list = new ArrayList<>();
+		for(RegleDTO r : regleService.getByEquipe(e.toEntity())) {
+			list.add(new NiveauDTO(r.getNiveau()));
+		}
+		return list;
+	}
+
+	public OrganismeService getOrganismeService() {
+		return this.orgService;
+	}
+
+}

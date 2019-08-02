@@ -1,0 +1,62 @@
+package com.infotel.dto;
+
+import java.util.List;
+
+import com.infotel.entity.Dispositif;
+import com.infotel.entity.Organisme;
+import com.infotel.entity.Equipe;
+
+public class DispositifDTO {
+	private int id;
+	private String nom;
+	private String description;
+	private String organisme;
+	
+	public DispositifDTO(String nom, String description, String organisme) {
+		this.nom = nom;
+		this.description = description;
+		this.organisme = organisme;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getOrganisme() {
+		return organisme;
+	}
+
+	public void setOrganisme(String organisme) {
+		this.organisme = organisme;
+	}
+
+	public Dispositif toEntity(Organisme org, List<Equipe> equipes) {
+		Dispositif disp = new Dispositif();
+		disp.setId(this.id);
+		disp.setDescription(this.description);
+		disp.setNom(nom);
+		disp.setEquipes(equipes);
+		disp.setOrganisme(org);
+		return disp;
+	}
+}

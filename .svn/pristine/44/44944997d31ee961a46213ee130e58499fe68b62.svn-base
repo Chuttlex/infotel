@@ -1,0 +1,45 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Service;
+
+import com.infotel.entity.AutoComplete;
+import com.infotel.repository.AutoCompleteRepository;
+
+@Service
+public class AutoCompleteService {
+	private final AutoCompleteRepository acRep;
+	
+	public AutoCompleteService(AutoCompleteRepository acRep) {
+		this.acRep=acRep;
+	}
+	
+	public void clear() {
+		acRep.deleteAll();
+	}
+	
+	public void create(String val) {
+		acRep.save(new AutoComplete(val));
+	}
+	
+	public ArrayList<AutoComplete> getAll(){
+		return acRep.findAll();
+	}
+	
+	public AutoComplete getByValue(String val) {
+		return acRep.findByValue(val);
+	}
+	
+	public AutoComplete getById(int id) {
+		return acRep.findByid(id);
+	}
+
+	public void delete(@Valid int id) {
+		// TODO Auto-generated method stub
+		this.acRep.deleteById(id);
+	}
+
+}

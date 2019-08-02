@@ -1,0 +1,101 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.entity.Competence;
+import com.infotel.service.CompetenceService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/data/competence")
+public class DataGetCompetenceController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final CompetenceService compService;
+	
+	public DataGetCompetenceController(CompetenceService compService) {
+		this.compService=compService;
+	}
+	
+	@GetMapping("/ByDomaine")
+	public ResponseEntity<?> getByDomaine(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Competence> competences = compService.getByDomaine(nom);
+		return new ResponseEntity<>(competences,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByNom")
+	public ResponseEntity<?> getByNom(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Competence competence = compService.getByNom(nom);
+		return new ResponseEntity<>(competence,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipe")
+	public ResponseEntity<?> getByEquipe(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Competence> competences = compService.getByEquipe(nom);
+		return new ResponseEntity<>(competences,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessource")
+	public ResponseEntity<?> getByRessource(@RequestBody String nom, @RequestBody String prenom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Competence> competences = compService.getByRessource(nom,prenom);
+		return new ResponseEntity<>(competences,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessourceAndNiveau")
+	public ResponseEntity<?> getByRessourceAndNiveau(@RequestBody String nom, @RequestBody String prenom,
+			@RequestBody int valeur, @RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Competence> competences = compService.getByRessourceAndNiveau(nom,prenom,valeur,orgnom);
+		return new ResponseEntity<>(competences,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndNiveau")
+	public ResponseEntity<?> getByEquipeAndNiveau(@Valid @RequestBody String nom,@Valid @RequestBody int valeur,
+			@Valid @RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Competence> competences = compService.getByEquipeAndNiveau(nom,valeur,orgnom);
+		return new ResponseEntity<>(competences,headers,HttpStatus.OK);
+	}
+
+}

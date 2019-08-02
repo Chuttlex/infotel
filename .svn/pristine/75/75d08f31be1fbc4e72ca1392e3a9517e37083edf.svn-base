@@ -1,0 +1,45 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.service.OrganismeService;
+
+@RestController
+@RequestMapping("/api/data/Organisme")
+public class DataGetOrganismeController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final OrganismeService orgService;
+	
+	public DataGetOrganismeController(OrganismeService orgService) {
+		this.orgService=orgService;
+	}
+	
+	@GetMapping("/ByNom={nom}")
+	public ResponseEntity<?> getByNom(@PathVariable("nom") String nom){
+		OrganismeDTO organisme = orgService.getByNom(nom);
+		return ResponseEntity.ok(organisme);
+	}
+	
+	@GetMapping("/ByDispositif={nom}")
+	public ResponseEntity<?> getByDispositif(@PathVariable("nom") String nom){
+		OrganismeDTO organisme = orgService.getByNom(nom);
+		return ResponseEntity.ok(organisme);
+	}
+	
+	@GetMapping("/ByNiveau={niveau}")
+	public ResponseEntity<?> getByNiveau(@PathVariable("niveau") int valeur){
+		List<OrganismeDTO> organismes = orgService.getByNiveau(valeur);
+		return ResponseEntity.ok(organismes);
+	}
+
+}

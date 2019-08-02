@@ -1,0 +1,132 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.dto.EquipeDTO;
+import com.infotel.entity.Equipe;
+import com.infotel.service.EquipeService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel/equipe")
+public class DataGetEquipeController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final EquipeService equipeService;
+	
+	public DataGetEquipeController(EquipeService equipeService) {
+		this.equipeService=equipeService;
+	}
+	
+	@GetMapping("/ByNom={nom}")
+	public ResponseEntity<?> getByNom(@PathVariable("nom") String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Equipe equipe = equipeService.getByNom(nom);
+		return new ResponseEntity<>(equipe.toDTO(),headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByDispositif={nom}")
+	public ResponseEntity<?> getByDispositif(@PathVariable("nom") String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Equipe> equipes = equipeService.getByDispositif(nom);
+		List<EquipeDTO> equipesDTO = new ArrayList<>();
+		for(Equipe e : equipes) {
+			equipesDTO.add(e.toDTO());
+		}
+		return new ResponseEntity<>(equipesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByRessource={id}")
+	public ResponseEntity<?> getByRessource(@PathVariable("id") int id){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Equipe equipe = equipeService.getByRessource(id);
+		return new ResponseEntity<>(equipe.toDTO(),headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetence={nom}")
+	public ResponseEntity<?> getByCompetence(@PathVariable("nom") String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Equipe> equipes = equipeService.getByCompetence(nom);
+		List<EquipeDTO> equipesDTO = new ArrayList<>();
+		for(Equipe e : equipes) {
+			equipesDTO.add(e.toDTO());
+		}
+		return new ResponseEntity<>(equipesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByNiveau={niveau}&{orgnom}")
+	public ResponseEntity<?> getByNiveau(@PathVariable("niveau") int valeur,@PathVariable("orgnom") String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Equipe> equipes = equipeService.getByNiveau(orgnom, valeur);
+		List<EquipeDTO> equipesDTO = new ArrayList<>();
+		for(Equipe e : equipes) {
+			equipesDTO.add(e.toDTO());
+		}
+		return new ResponseEntity<>(equipesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveau={nom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByCompetenceAndNiveau(@PathVariable("nom") String nom,
+			@PathVariable("niveau") int valeur,@PathVariable("orgnom") String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Equipe> equipes = equipeService.getByCompetenceAndNiveau(nom,orgnom,valeur);
+		List<EquipeDTO> equipesDTO = new ArrayList<>();
+		for(Equipe e : equipes) {
+			equipesDTO.add(e.toDTO());
+		}
+		return new ResponseEntity<>(equipes,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByOrganisme={orgnom}")
+	public ResponseEntity<?> getByOrganisme(@PathVariable("orgnom") String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Equipe> equipes = equipeService.getByOrganisme(orgnom);
+		List<EquipeDTO> equipesDTO = new ArrayList<>();
+		for(Equipe e : equipes) {
+			equipesDTO.add(e.toDTO());
+		}
+		return new ResponseEntity<>(equipesDTO,headers,HttpStatus.OK);
+	}
+
+}

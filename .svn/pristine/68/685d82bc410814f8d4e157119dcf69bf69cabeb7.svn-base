@@ -1,0 +1,55 @@
+package com.infotel.dto;
+
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Organisme;
+
+public class NiveauDTO {
+	private int id;
+	private int value;
+	private String description;
+	private String organisme;
+	
+	public NiveauDTO(int value, String description, String organisme) {
+		this.value = value;
+		this.description = description;
+		this.organisme = organisme;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getOrganisme() {
+		return organisme;
+	}
+
+	public void setOrganisme(String organisme) {
+		this.organisme = organisme;
+	};
+
+	public Niveau toEntity(Organisme org) {
+		Niveau n = new Niveau(value, description, org);
+		n.setId(id);
+		return n;
+	}
+}

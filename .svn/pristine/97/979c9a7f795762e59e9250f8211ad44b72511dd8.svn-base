@@ -1,0 +1,99 @@
+package com.infotel.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.service.OrganismeService;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data/")
+public class DataClearController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataClearController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@DeleteMapping("/clearDispositifs")
+	public ResponseEntity<?> clearDispositifs(){
+		dispositifService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearOrganismes")
+	public ResponseEntity<?> clearOrganismes(){
+		organismeService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearNiveaux")
+	public ResponseEntity<?> clearNiveaux(){
+		niveauService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearEquipes")
+	public ResponseEntity<?> clearEquipes(){
+		equipeService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearRessources")
+	public ResponseEntity<?> clearRessources(){
+		resService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearHistoriques")
+	public ResponseEntity<?> clearHistoriques(){
+		histService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearCompetences")
+	public ResponseEntity<?> clearCompetences(){
+		compService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearRegles")
+	public ResponseEntity<?> clearRegles(){
+		regleService.clear();
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/clearRessourcehascompetences")
+	public ResponseEntity<?> clearRessourcehascompetences(){
+		rcService.clear();
+		return ResponseEntity.ok().build();
+	}
+
+}

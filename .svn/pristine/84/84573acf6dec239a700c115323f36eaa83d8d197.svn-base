@@ -1,0 +1,102 @@
+package com.infotel.controller;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.service.OrganismeService;
+import com.infotel.entity.RessourcehascompetencePK;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data")
+public class DataDeleteController {
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataDeleteController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@DeleteMapping("/deleteDispositif")
+	public ResponseEntity<?> deleteDispositif(@Valid @RequestBody int id){
+		dispositifService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteOrganisme")
+	public ResponseEntity<?> deleteOrganisme(@Valid @RequestBody int id){
+		organismeService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteEquipe")
+	public ResponseEntity<?> deleteEquipe(@Valid @RequestBody int id){
+		equipeService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteNiveau")
+	public ResponseEntity<?> deleteNiveau(@Valid @RequestBody int id){
+		niveauService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteRessource")
+	public ResponseEntity<?> deleteRessource(@Valid @RequestBody int id){
+		resService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteHistorique")
+	public ResponseEntity<?> deleteHistorique(@Valid @RequestBody int id){
+		histService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteCompetence")
+	public ResponseEntity<?> deleteCompetence(@Valid @RequestBody int id){
+		compService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteRegle")
+	public ResponseEntity<?> deleteRegle(@Valid @RequestBody int id){
+		regleService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/deleteRessourcehascompetence")
+	public ResponseEntity<?> deleteRessourcehascompetence(@Valid @RequestBody RessourcehascompetencePK id){
+		rcService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+
+}

@@ -1,0 +1,73 @@
+package com.infotel.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.*;
+
+import com.infotel.dto.DispositifhascompetenceDTO;
+import com.infotel.dto.RessourcehascompetenceDTO;
+
+/**
+ * Entity implementation class for Entity: Dispositifhascompetence
+ *
+ */
+@Entity
+@Table(name="Dispositifhascompetence")
+@NamedQuery(name="Dispositifhascompetence.findAll", query="SELECT r FROM Dispositifhascompetence r")
+public class Dispositifhascompetence implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@EmbeddedId
+	private DispositifhascompetencePK id;
+
+	//bi-directional many-to-one association to Competence
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="idcompetence", nullable=false, insertable=false, updatable=false)
+	private Competence competence;
+
+	//bi-directional many-to-one association to Ressource
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="iddispositif", nullable=false, insertable=false, updatable=false)
+	private Dispositif dispositif;
+
+	public Dispositifhascompetence() {
+	}
+	
+	public Dispositifhascompetence(Dispositif d, Competence c) {
+		// TODO Auto-generated constructor stub
+		this.dispositif=d;this.competence=c;this.id=new DispositifhascompetencePK(d.getId(),c.getId());
+	}
+
+	public DispositifhascompetencePK getId() {
+		return id;
+	}
+
+	public void setId(DispositifhascompetencePK id) {
+		this.id = id;
+	}
+
+	public Competence getCompetence() {
+		return competence;
+	}
+
+	public void setCompetence(Competence competence) {
+		this.competence = competence;
+	}
+
+	public Dispositif getDispositif() {
+		return dispositif;
+	}
+
+	public void setDispositif(Dispositif dispositif) {
+		this.dispositif = dispositif;
+	}
+	
+	public DispositifhascompetenceDTO toDTO() {
+		DispositifhascompetenceDTO rc = new DispositifhascompetenceDTO(dispositif.getNom(),competence.getNom());
+		rc.setIdd(id.getiddispositif());
+		rc.setIdc(id.getIdcompetence());
+		return rc;
+	}
+   
+}

@@ -1,0 +1,181 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.infotel.data.dto.CompetenceDTO;
+import com.infotel.data.dto.DispositifDTO;
+import com.infotel.data.dto.DomaineDTO;
+import com.infotel.data.dto.EquipeDTO;
+import com.infotel.data.dto.HistoriqueresDTO;
+import com.infotel.data.dto.NiveauDTO;
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.dto.RegleDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.data.entity.*;
+import com.infotel.data.repository.*;
+import com.infotel.data.service.OrganismeService;
+import com.infotel.entity.Competence;
+import com.infotel.entity.Dispositif;
+import com.infotel.entity.Domaine;
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Historiqueres;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Regle;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.repository.DispositifRepository;
+
+@Service
+@Transactional
+public class DispositifService {
+	
+	private final Logger log = LoggerFactory.getLogger(DispositifService.class);
+	
+	// Définition des repository
+		private final DispositifRepository dispRep;	
+		private final EquipeService equipeService;		
+		private final OrganismeService orgService;		
+		private final NiveauService niveauService;		
+		private final RessourceService resService;		
+		private final HistoriqueresService histService;		
+		private final DomaineService domaineService;		
+		private final CompetenceService compService;		
+		private final RegleService regleService;		
+		private final RessourcehascompetenceService resCompService;
+		
+		public DispositifService(DispositifRepository dispRep,EquipeService equipeService,OrganismeService orgService,
+				NiveauService niveauService,RessourceService resService,HistoriqueresService histService,DomaineService domaineService,
+				CompetenceService compService,RegleService regleService,RessourcehascompetenceService resCompService) {
+			this.dispRep=dispRep;this.equipeService=equipeService;this.orgService=orgService;this.niveauService=niveauService;this.resService=resService;
+			this.histService=histService;this.domaineService=domaineService;this.compService=compService;this.resCompService=resCompService;this.regleService=regleService;
+		}
+		
+		public void initialize(){
+			//nettoyage pour le test
+			domaineService.clear();
+			regleService.clear();
+			resCompService.clear();
+			compService.clear();
+			histService.clear();
+			niveauService.clear();
+			resService.clear();
+			orgService.clear();
+			equipeService.clear();
+			dispRep.deleteAll();
+			//
+			System.out.println("Initialisation démarre");
+			DomaineDTO d=new DomaineDTO(new Domaine("Technique"));
+			domaineService.create(d);
+			CompetenceDTO c=new CompetenceDTO(new Competence("Java",d.toEntity()));
+			compService.create(c,d.getValeur());
+			CompetenceDTO c2=new CompetenceDTO(new Competence("C",d.toEntity()));
+			CompetenceDTO c3=new CompetenceDTO(new Competence("Javascript",d.toEntity()));
+			compService.create(c2, d.getValeur());
+			compService.create(c3, d.getValeur());
+			DomaineDTO d2 = new DomaineDTO(new Domaine("Fonctionnel"));
+			DomaineDTO d3 = new DomaineDTO(new Domaine("Exploitation"));
+			domaineService.create(d2);domaineService.create(d3);
+			CompetenceDTO c4 = new CompetenceDTO(new Competence("Conseil",d2.toEntity()));
+			CompetenceDTO c5 = new CompetenceDTO(new Competence("Travail equipe",d3.toEntity()));
+			compService.create(c4, d2.getValeur());
+			compService.create(c5, d3.getValeur());
+			Dispositif dispositif = new Dispositif("Infotel");
+			dispRep.save(dispositif);
+			EquipeDTO equipe1 =new EquipeDTO( new Equipe("equipe front",4,dispositif));
+			equipeService.create(equipe1,dispositif.getNom());
+			OrganismeDTO org =new OrganismeDTO( new Organisme("Infotel","Société de service dont le siège est à Paris, possède plusieurs agences en France, possède plus de 1000 employés.",dispositif));
+			orgService.create(org, dispositif.getNom());
+			// Création des niveaux
+			List<Niveau> niveaux=new ArrayList<>();
+			for(int i=0;i<=5;i++) {
+				NiveauDTO n =new NiveauDTO( new Niveau(i,"",org.toEntity()));
+				niveauService.create(n, org.getOrganisme());
+			}
+			RessourceDTO r1 =new RessourceDTO( new Ressource("Rema","Paul",3,equipe1.toEntity()));
+			RessourceDTO r2 =new RessourceDTO( new Ressource("Blangero","Thomas",50,equipe1.toEntity()));
+			resService.create(r1, equipe1.getNom());
+			resService.create(r2, equipe1.getNom());
+			HistoriqueresDTO h1 =new HistoriqueresDTO( new Historiqueres(new Date(),true,false,r1.toEntity()));
+			@SuppressWarnings("deprecation")
+			HistoriqueresDTO h2 = new HistoriqueresDTO( new Historiqueres(new Date("2019/03/04"),new Date("2019/09/03"),true,false,r2.toEntity()));
+			histService.create(h1, r1.getNom(), r1.getPrenom());
+			histService.create(h2, r2.getNom(), r2.getPrenom());
+			// Ajout des compétences
+			RessourcehascompetenceDTO rc1=new RessourcehascompetenceDTO(new Ressourcehascompetence(r1.toEntity(),c2.toEntity(),niveaux.get(3),new Date()));
+			RessourcehascompetenceDTO rc2=new RessourcehascompetenceDTO(new Ressourcehascompetence(r1.toEntity(),c4.toEntity(),niveaux.get(5),new Date()));
+			RessourcehascompetenceDTO rc3=new RessourcehascompetenceDTO(new Ressourcehascompetence(r2.toEntity(),c.toEntity(),niveaux.get(4),new Date()));
+			RessourcehascompetenceDTO rc4=new RessourcehascompetenceDTO(new Ressourcehascompetence(r2.toEntity(),c3.toEntity(),niveaux.get(2),new Date()));
+			RessourcehascompetenceDTO rc5=new RessourcehascompetenceDTO(new Ressourcehascompetence(r2.toEntity(),c5.toEntity(),niveaux.get(5),new Date()));
+			resCompService.create(rc1, r1.getNom(), r1.getPrenom(), c2.getNom(), org.getOrganisme(), 3);
+			resCompService.create(rc2, r1.getNom(), r1.getPrenom(), c4.getNom(), org.getOrganisme(), 5);
+			resCompService.create(rc3, r2.getNom(), r2.getPrenom(), c.getNom(), org.getOrganisme(), 4);
+			resCompService.create(rc4, r2.getNom(), r2.getPrenom(), c3.getNom(), org.getOrganisme(), 2);
+			resCompService.create(rc5, r2.getNom(), r2.getPrenom(), c5.getNom(), org.getOrganisme(), 5);
+			// Ajout de la regle
+			RegleDTO r =new RegleDTO( new Regle(equipe1.toEntity(),c.toEntity(),niveaux.get(4),2,0.5,false));
+			regleService.create(r, equipe1.getNom(), c.getNom(), org.getOrganisme(), 4);
+			// Mise à jour des données et sauvegarde
+			dispRep.save(dispositif);
+		}
+		
+		public DispositifDTO create(DispositifDTO disp) {
+			return new DispositifDTO(dispRep.save(disp.toEntity()));
+		}
+
+		public ArrayList<DispositifDTO> getAll(){
+			ArrayList<DispositifDTO> list=new ArrayList<>();
+			for(Dispositif d : dispRep.findAll()) {
+				list.add(new DispositifDTO(d));
+			}
+			return list;
+		}
+
+		public DispositifDTO getById(int id)  {
+			Dispositif d = dispRep.findByid(id);
+			if(d==null)
+				return null;
+			else {
+				return new DispositifDTO(d);
+			}
+		}
+
+		public DispositifDTO update(int id,DispositifDTO disp)  {
+			Dispositif d = dispRep.findByid(id);
+			if(d==null)
+				return null;
+			else {
+				d.setEquipes(disp.getEquipes());
+				d.setNom(disp.getNom());
+				d.setOrganisme(disp.getOrganisme());
+				Dispositif f = dispRep.save(d);
+				return new DispositifDTO(f);
+			}
+		}
+		
+		public void delete(int id)  {
+			Dispositif d = dispRep.findByid(id);
+			if(d!=null)
+				 dispRep.delete(d);
+		}
+
+		public DispositifDTO getByNom(String nom) {
+			return new DispositifDTO(dispRep.findBynom(nom));
+		}
+
+		public OrganismeService getOrganismeService() {
+			return this.orgService;
+		}
+
+		public void clear() {
+			dispRep.deleteAll();		
+		}
+	}
+

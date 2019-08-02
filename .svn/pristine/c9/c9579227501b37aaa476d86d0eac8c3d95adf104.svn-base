@@ -1,0 +1,54 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.NiveauDTO;
+import com.infotel.service.NiveauService;
+
+@RestController
+@RequestMapping("/api/data/Niveau")
+public class DataGetNiveauController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final NiveauService niveauService;
+	
+	public DataGetNiveauController(NiveauService niveauService) {
+		this.niveauService=niveauService;
+	}
+	
+	@GetMapping("/ByOrganisme={orgnom}")
+	public ResponseEntity<?> getByOrganisme(@PathVariable("orgnom") String nom){
+		List<NiveauDTO> niveaux = niveauService.getByOrganisme(nom);
+		return ResponseEntity.ok(niveaux);
+	}
+	
+	@GetMapping("/ByValeur={valeur}")
+	public ResponseEntity<?> getByOrganisme(@PathVariable("valeur") int valeur){
+		List<NiveauDTO> niveaux = niveauService.getByValeur(valeur);
+		return ResponseEntity.ok(niveaux);
+	}
+	
+	@GetMapping("/ByRessourceAndCompetence={nom}&{prenom}&{cnom}")
+	public ResponseEntity<?> getByRessourceAndCompetence(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom,
+			@PathVariable("cnom") String cnom){
+		List<NiveauDTO> niveaux = niveauService.getByRessourceAndCompetence(nom,prenom,cnom);
+		return ResponseEntity.ok(niveaux);
+	}
+	
+	@GetMapping("/ByEquipeAndCompetence={enom}&{nom}")
+	public ResponseEntity<?> getByEquipeAndCompetence(@PathVariable("nom") String nom,@PathVariable("enom") String enom){
+		List<NiveauDTO> niveaux = niveauService.getByEquipeAndCompetence(nom,enom);
+		return ResponseEntity.ok(niveaux);
+	}
+}

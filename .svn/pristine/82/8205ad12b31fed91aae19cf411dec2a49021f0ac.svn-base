@@ -1,0 +1,219 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.dto.*;
+import com.infotel.service.*;
+import com.infotel.entity.*;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel")
+public class DataCreateController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	private final AutoCompleteService acService;
+	
+	public DataCreateController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService,
+			AutoCompleteService acService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;this.acService=acService;
+	}
+	
+	@PostMapping("/initialize")
+	public ResponseEntity<?> initialize(){
+		System.out.println("Début initialisation");
+		domaineService.initialize();
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createDispositif")
+	public ResponseEntity<?> createDispositif(@RequestBody DispositifDTO disp){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Organisme org = organismeService.getByNom(disp.getOrganisme());
+		Dispositif d = disp.toEntity();
+		d.setOrganisme(org);
+		dispositifService.create(d);
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createOrganisme")
+	public ResponseEntity<?> createOrganisme(@RequestBody OrganismeDTO org){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		organismeService.create(org.toEntity());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createEquipe")
+	public ResponseEntity<?> createEquipe(@RequestBody EquipeDTO equipe){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Equipe e = equipe.toEntity();
+		Dispositif disp = dispositifService.getByNom(equipe.getDispositif());
+		e.setDispositif(disp);
+		equipeService.create(e,equipe.getDispositif());
+			return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createNiveaux")
+	public ResponseEntity<?> createNiveau(@Valid @RequestBody List<NiveauDTO> niveaux){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		for(NiveauDTO niveau: niveaux) {
+			Organisme org = organismeService.getByNom(niveau.getOrganisme());
+			Niveau n = niveau.toEntity(org);
+			niveauService.create(n,niveau.getOrganisme());
+		}
+			return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createRessource")
+	public ResponseEntity<?> createRessource(@Valid @RequestBody RessourceDTO res){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Ressource r = res.toEntity();
+		Equipe equipe = equipeService.getByNom(res.getEquipe());
+		r.setEquipe(equipe);
+		resService.create(r,res.getEquipe());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createHistorique")
+	public ResponseEntity<?> createHistorique(@Valid @RequestBody HistoriqueDTO hist){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Ressource res = resService.getByNomAndPrenom(hist.getRnom(), hist.getRprenom());
+		Historiqueres h = hist.toEntity(res);
+		h.setId(hist.getId());
+		h.setDateentree(hist.getDateentree());
+		h.setDatesortie(hist.getDatesortie());
+		h.setIsactif(hist.isActif());
+		h.setIsactiveasbackup(hist.isActifasbackup());
+		h.setRessource(res);
+		histService.create(h, hist.getRnom(), hist.getRprenom());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createCompetence")
+	public ResponseEntity<?> createCompetence(@Valid @RequestBody CompetenceDTO competence){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Competence c = competence.toEntity();
+		Domaine domaine = domaineService.getByNom(competence.getDomaine());
+		Dispositif d = dispositifService.getByNom(competence.getDispositif());
+		c.setDomaine(domaine);
+		c.setDispositif(d);
+		compService.create(c, competence.getDomaine());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createRegle")
+	public ResponseEntity<?> createRegle(@Valid @RequestBody RegleDTO regle){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Regle r = regle.toEntity();
+		Competence comp = compService.getByNom(regle.getCnom());
+		r.setCompetence(comp);
+		Equipe equipe = equipeService.getByNom(regle.getEnom());
+		r.setEquipe(equipe);
+		List<Niveau> niveaux = niveauService.getByOrganisme(regle.getOrganisme());
+		for(Niveau niveau: niveaux) {
+			if(niveau.getValeur()==regle.getValeur())
+				r.setNiveau(niveau);
+		}
+		regleService.create(r, regle.getEnom(), regle.getCnom(),
+				regle.getOrganisme(), regle.getValeur());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createRessourcehascompetence")
+	public ResponseEntity<?> createRessourcehascompetence(@Valid @RequestBody RessourcehascompetenceDTO rc){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Ressourcehascompetence r = rc.toEntity();
+		Competence comp = compService.getByNom(rc.getCnom());
+		r.setCompetence(comp);
+		Ressource res = resService.getByNomAndPrenom(rc.getRnom(), rc.getRprenom());
+		r.setRessource(res);
+		List<Niveau> niveaux = niveauService.getByOrganisme(rc.getOrganisme());
+		for(Niveau niveau: niveaux) {
+			if(niveau.getValeur()==rc.getValeur())
+				r.setNiveau(niveau);
+		}
+		rcService.create(r, rc.getRnom(), rc.getRprenom(),
+				rc.getCnom(), rc.getOrganisme(),
+				rc.getValeur());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/createAutoComplete")
+	public ResponseEntity<?> createAutoComplete(@Valid @RequestBody AutoComplete ac){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		acService.create(ac.getValue());
+		return new ResponseEntity<>(headers,HttpStatus.CREATED);
+	}
+}

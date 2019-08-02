@@ -1,0 +1,296 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.infotel.data.dto.CompetenceDTO;
+import com.infotel.data.dto.NiveauDTO;
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.entity.Competence;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.entity.RessourcehascompetencePK;
+import com.infotel.repository.RessourcehascompetenceRepository;
+
+public class RessourcehascompetenceService {
+	
+	private final RessourcehascompetenceRepository rcRep;
+	private final RessourceService resService;
+	private final CompetenceService compService;
+	private final NiveauService niveauService;
+	
+	public RessourcehascompetenceService(RessourcehascompetenceRepository rcRep, RessourceService resService,
+			CompetenceService compService, NiveauService niveauService) {
+		this.rcRep=rcRep;this.resService=resService;this.compService=compService;this.niveauService=niveauService;
+	}
+	
+	public void clear() {
+		rcRep.deleteAll();
+	}
+	
+	public void create(RessourcehascompetenceDTO rc, String rnom,String rprenom, String cnom, String orgnom, int niveau) {
+		rcRep.save(rc.toEntity());
+		RessourceDTO res = resService.getByNomAndPrenom(rnom,rprenom);
+		CompetenceDTO comp = compService.getByNom(cnom);
+		NiveauDTO n = new NiveauDTO(niveauService.getOrganismeService().getByNom(orgnom).getNiveaux().get(niveau));
+		List<Ressourcehascompetence> rcsR=res.getRessourcehascompetences();
+		List<Ressourcehascompetence> rcsC=comp.getRessourcehascompetences();
+		List<Ressourcehascompetence> rcsN=n.getRessourcehascompetences();
+		rcsR.add(rc.toEntity());rcsC.add(rc.toEntity());rcsN.add(rc.toEntity());
+		res.setRessourcehascompetences(rcsR);comp.setRessourcehascompetences(rcsC);n.setRessourcehascompetences(rcsN);
+		resService.update(res.getId(), res);
+		compService.update(comp.getId(), comp);
+		niveauService.update(n.getId(), n);
+	}
+	
+	public ArrayList<RessourcehascompetenceDTO> getAll(){
+		ArrayList<RessourcehascompetenceDTO> list=new ArrayList<>();
+		for(Ressourcehascompetence d : rcRep.findAll()) {
+			list.add(new RessourcehascompetenceDTO(d));
+		}
+		return list;
+	}
+	
+	public RessourcehascompetenceDTO getById(RessourcehascompetencePK id)  {
+		Ressourcehascompetence d = rcRep.findById(id.hashCode());
+		if(d==null)
+			return null;
+		else {
+			return new RessourcehascompetenceDTO(d);
+		}
+	}
+	
+	public RessourcehascompetenceDTO update(RessourcehascompetencePK id,RessourcehascompetenceDTO rc)  {
+		Ressourcehascompetence d = rcRep.findById(id.hashCode());
+		if(d==null)
+			return null;
+		else {
+			d.setCompetence(rc.getCompetence());
+			d.setDateevolcomp(rc.getDateevolcomp());
+			d.setNiveau(rc.getNiveau());
+			d.setRessource(rc.getRessource());
+			Ressourcehascompetence f = rcRep.save(d);
+			return new RessourcehascompetenceDTO(f);
+		}
+	}
+	
+	public void delete(RessourcehascompetencePK id)  {
+		Ressourcehascompetence d = rcRep.findById(id.hashCode());
+		if(d!=null)
+			rcRep.delete(d);
+	}
+	
+	public List<RessourcehascompetenceDTO> getByRessource(String nom,String prenom)  {
+		RessourceDTO r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByressource(r.toEntity())) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;
+	}
+
+	public List<RessourcehascompetenceDTO> getByCompetence(Competence c) {
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findBycompetence(c)) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;		
+	}
+
+	public List<RessourcehascompetenceDTO> getByNiveau(int valeur,String nom) {
+		OrganismeDTO org = niveauService.getOrganismeService().getByNom(nom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByniveau(n)) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;		
+	}
+
+	public List<RessourcehascompetenceDTO> getByRessourceAndCompetence(String nom,String prenom,String Cnom) {
+		RessourceDTO r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return new ArrayList<>();
+		CompetenceDTO c = compService.getByNom(nom);
+		if(c==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByRessourceAndCompetence(r.toEntity(),c.toEntity())) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;
+	}
+
+	public List<RessourcehascompetenceDTO> getByRessourceAndNiveau(String nom,String prenom,int valeur,String orgNom) {
+		RessourceDTO r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return new ArrayList<>();
+		OrganismeDTO org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByRessourceAndNiveau(r.toEntity(),n)) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;
+	}
+
+	public List<RessourcehascompetenceDTO> getByCompetenceAndNiveau(String nom,int valeur,String orgNom) {
+		CompetenceDTO c = compService.getByNom(nom);
+		if(c==null)
+			return new ArrayList<>();
+		OrganismeDTO org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> list = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByNiveauAndCompetence(n, c.toEntity())) {
+			list.add(new RessourcehascompetenceDTO(rc));
+		}
+		return list;
+	}
+
+	public RessourcehascompetenceDTO getByRessourceAndCompetenceAndNiveau(String nom,String prenom,String Cnom,int valeur,String orgNom) {
+		RessourceDTO r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return new RessourcehascompetenceDTO();
+		CompetenceDTO c = compService.getByNom(Cnom);
+		if(c==null)
+			return new RessourcehascompetenceDTO();
+		OrganismeDTO org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new RessourcehascompetenceDTO();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new RessourcehascompetenceDTO();
+		return new RessourcehascompetenceDTO(rcRep.findByRessourceAndCompetenceAndNiveau(r.toEntity(), c.toEntity(), n));
+	}
+
+	public RessourceService getRessourceService() {
+		return this.resService;
+	}
+
+	public NiveauService getNiveauService() {
+		return this.niveauService;
+	}
+
+	public CompetenceDTO getCompetenceByNom(String cnom) {
+		return compService.getByNom(cnom);
+	}
+
+	public List<RessourcehascompetenceDTO> getByNiveauAndCompetence(int valeur,String orgnom, String nom) {
+		OrganismeDTO org = niveauService.getOrganismeService().getByDispositif(orgnom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		CompetenceDTO c = compService.getByNom(nom);
+		if(c==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByNiveauAndCompetence(n, c.toEntity())) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+
+	public List<RessourcehascompetenceDTO> getByNiveau(Niveau n) {
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByniveau(n)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+
+	public RessourceDTO getRessourceByNomAndPrenom(String nom, String prenom) {
+		return resService.getByNomAndPrenom(nom, prenom);
+	}
+
+	public List<RessourcehascompetenceDTO> getByRessourceAndCompetence(Ressource res, Competence comp) {
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByRessourceAndCompetence(res, comp)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+	
+	public List<RessourcehascompetenceDTO> getByDateEvol(Date evol){
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByDateevolcomp(evol)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+	
+	public List<RessourcehascompetenceDTO> getByRessourceAndDateEvol(String nom,String prenom,Date evol){
+		RessourceDTO r = resService.getByNomAndPrenom(nom,prenom);
+		if(r==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByRessourceAndDateevolcomp(r.toEntity(),evol)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+	
+	public List<RessourcehascompetenceDTO> getByCompetenceAndDateEvol(String nom,Date evol){
+		CompetenceDTO c = compService.getByNom(nom);
+		if(c==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByCompetenceAndDateevolcomp(c.toEntity(),evol)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+	
+	public List<RessourcehascompetenceDTO> getByRessourceAndCompetenceAndDateEvol(String nom,String prenom,String cnom,Date evol){
+		RessourceDTO r = resService.getByNomAndPrenom(nom,prenom);
+		if(r==null)
+			return new ArrayList<>();
+		CompetenceDTO c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByRessourceAndCompetenceAndDateevolcomp(r.toEntity(),c.toEntity(),evol)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+
+	public List<RessourcehascompetenceDTO> getByCompetence(String nom) {
+		CompetenceDTO competence = compService.getByNom(nom);
+		if(competence==null)
+			return new ArrayList<>();
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findBycompetence(competence.toEntity())) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+
+	public List<RessourcehascompetenceDTO> getByNiveauAndCompetence(Niveau n, Competence competence) {
+		List<RessourcehascompetenceDTO> rcs = new ArrayList<>();
+		for(Ressourcehascompetence rc : rcRep.findByNiveauAndCompetence(n,competence)) {
+			rcs.add(new RessourcehascompetenceDTO(rc));
+		}
+		return rcs;
+	}
+
+}

@@ -1,0 +1,181 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.infotel.data.dto.CompetenceDTO;
+import com.infotel.data.dto.EquipeDTO;
+import com.infotel.data.dto.HistoriqueresDTO;
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Ressource;
+import com.infotel.repository.RessourceRepository;
+
+
+
+public class RessourceService {
+	
+	private final RessourceRepository resRep;
+	private final EquipeService equipeService;
+	private final HistoriqueresService histService;
+	private final RessourcehascompetenceService rcService;
+	
+	public RessourceService(RessourceRepository resRep, EquipeService equipeService, HistoriqueresService histService,
+			RessourcehascompetenceService rcService) {
+		this.resRep=resRep;this.equipeService=equipeService;this.histService=histService;this.rcService=rcService;
+	}
+	
+	public void clear() {
+		resRep.deleteAll();
+	}
+	
+	public void create(RessourceDTO ressource, String nom) {
+		EquipeDTO equipe = equipeService.getByNom(nom);
+		resRep.save(ressource.toEntity());
+		List<Ressource> ressources = equipe.getRessources();
+		ressources.add(ressource.toEntity());
+		equipe.setRessources(ressources);
+		equipeService.update(equipe.getId(), equipe);
+	}
+	
+	public ArrayList<RessourceDTO> getAll(){
+		ArrayList<RessourceDTO> list=new ArrayList<>();
+		for(Ressource d : resRep.findAll()) {
+			list.add(new RessourceDTO(d));
+		}
+		return list;
+	}
+	
+	public RessourceDTO getById(int id)  {
+		Ressource d = resRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			return new RessourceDTO(d);
+		}
+	}
+	
+	public HistoriqueresDTO getHistorique(String nom,String prenom) {
+		return histService.getByRessource(nom, prenom);
+	}
+	
+	public RessourceDTO update(int id,RessourceDTO res)  {
+		Ressource d = resRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setEquipe(res.getEquipe());
+			d.setPrenom(res.getPrenom());
+			d.setReferenceclient(res.getReferenceclient());
+			d.setNom(res.getNom());
+			d.setRessourcehascompetences(res.getRessourcehascompetences());
+			d.setHistoriqueres(res.getHist());
+			Ressource f = resRep.save(d);
+			return new RessourceDTO(f);
+		}
+	}
+	
+	public void delete(int id)  {
+		Ressource d = resRep.findByid(id);
+		if(d!=null)
+			resRep.delete(d);
+	}
+	
+	public List<RessourceDTO> getByEquipe(String nom) {
+		EquipeDTO e = equipeService.getByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		List<RessourceDTO> list = new ArrayList<>();
+		for(Ressource r : resRep.findByequipe(e.toEntity())) {
+			list.add(new RessourceDTO(r));
+		}
+		return list;
+	}
+	
+	// A appliquer sur plusieurs niveaux si on veut les Ressources supérieures à un niveau
+	public List<RessourceDTO> getByCompetenceAndNiveau(String cnom,int valeur,String orgNom) {
+		CompetenceDTO c=rcService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		OrganismeDTO org = equipeService.getDispositifService().getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<RessourceDTO> list = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcService.getByNiveauAndCompetence(n, c.toEntity())) {
+			list.add(new RessourceDTO(rc.getRessource()));
+		}
+		return list;
+	}
+	
+	public List<RessourceDTO> getByCompetence(String cnom) {
+		CompetenceDTO c=rcService.getCompetenceByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<RessourceDTO> list = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcService.getByCompetence(c.toEntity())) {
+			list.add(new RessourceDTO(rc.getRessource()));
+		}
+		return list;
+	}
+	
+	public List<RessourceDTO> getByNiveau(int valeur,String orgNom) {
+		OrganismeDTO org = equipeService.getDispositifService().getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaux().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<RessourceDTO> list = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcService.getByNiveau(n)) {
+			list.add(new RessourceDTO(rc.getRessource()));
+		}
+		return list;
+	}
+
+	public RessourceDTO getByNomAndPrenom(String nom, String prenom) {
+		return new RessourceDTO(resRep.findByNomAndPrenom(nom, prenom));
+	}
+	
+	public List<RessourceDTO> getByIsActif(boolean actif){
+		List<RessourceDTO> ressources = new ArrayList<>();
+		for(HistoriqueresDTO hist : histService.getAll()) {
+			if(hist.isIsactif()==actif)
+				ressources.add(new RessourceDTO(hist.getRessource()));
+		}
+		return ressources;
+	}
+	
+	public List<RessourceDTO> getByIsActifAsBackUp(boolean actif){
+		List<RessourceDTO> ressources = new ArrayList<>();
+		for(HistoriqueresDTO hist : histService.getAll()) {
+			if(hist.isisactiveasbackup()==actif)
+				ressources.add(new RessourceDTO(hist.getRessource()));
+		}
+		return ressources;
+	}
+	
+	public List<RessourceDTO> getByDateentree(Date entree){
+		List<RessourceDTO> ressources = new ArrayList<>();
+		for(HistoriqueresDTO hist : histService.getAll()) {
+			if(hist.getDateentree().equals(entree))
+				ressources.add(new RessourceDTO(hist.getRessource()));
+		}
+		return ressources;
+	}
+	
+	public List<RessourceDTO> getByDatesortie(Date sortie){
+		List<RessourceDTO> ressources = new ArrayList<>();
+		for(HistoriqueresDTO hist : histService.getAll()) {
+			if(hist.getDatesortie().equals(sortie))
+				ressources.add(new RessourceDTO(hist.getRessource()));
+		}
+		return ressources;
+	}
+
+}

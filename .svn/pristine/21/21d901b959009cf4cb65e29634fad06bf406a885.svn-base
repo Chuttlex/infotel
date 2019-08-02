@@ -1,0 +1,99 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.infotel.entity.Competence;
+import com.infotel.entity.Dispositif;
+import com.infotel.entity.Dispositifhascompetence;
+import com.infotel.entity.DispositifhascompetencePK;
+import com.infotel.repository.DispositifhascompetenceRepository;
+
+@Service
+public class DispositifhascompetenceService {
+	
+	private final DispositifhascompetenceRepository dcRep;
+	private final DispositifService dispService;
+	private final CompetenceService compService;
+	
+	public DispositifhascompetenceService (DispositifhascompetenceRepository dcRep,@Lazy DispositifService dispService
+			,@Lazy CompetenceService compService) {
+		this.dcRep=dcRep;this.dispService=dispService;this.compService=compService;
+	}
+	
+	public void clear() {
+		this.dcRep.deleteAll();
+	}
+	
+	public void create(Dispositifhascompetence dc) {
+		dcRep.save(dc);
+		Dispositif dispositif = this.dispService.getById(dc.getId().getiddispositif());
+		Competence competence = this.compService.getById(dc.getId().getIdcompetence());
+		List<Dispositifhascompetence> dcsD = dispositif.getDispositifhascompetences();
+		List<Dispositifhascompetence> dcsC = competence.getDispositifhascompetences();
+		dcsD.add(dc);dcsC.add(dc);
+		dispositif.setDispositifhascompetences(dcsD);
+		competence.setDispositifhascompetences(dcsC);
+		dispService.update(dispositif.getId(), dispositif);
+		compService.update(competence.getId(), competence);
+	}
+	
+	public ArrayList<Dispositifhascompetence> getAll(){
+		return this.dcRep.findAll();
+	}
+	
+	public Dispositifhascompetence getById(DispositifhascompetencePK id) {
+		return dcRep.findById(id);
+	}
+	
+	public Dispositifhascompetence update(DispositifhascompetencePK id, Dispositifhascompetence dc) {
+		Dispositifhascompetence d = dcRep.findById(id);
+		if(d!=null)
+			return null;
+		d.setDispositif(dc.getDispositif());
+		d.setCompetence(dc.getCompetence());
+		return dcRep.save(d);
+	}
+	
+	public void delete(DispositifhascompetencePK id)  {
+		Dispositifhascompetence d = dcRep.findById(id);
+		if(d!=null)
+			dcRep.delete(d);
+	}
+	
+	public List<Dispositifhascompetence> getByCompetence(String nom) {
+		Competence c = compService.getByNom(nom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Dispositifhascompetence> list = new ArrayList<>();
+		for(Dispositifhascompetence dc : dcRep.findByCompetence(c)) {
+			list.add(dc);
+		}
+		return list;		
+	}
+	
+	public List<Dispositifhascompetence> getByDispositif(String nom) {
+		Dispositif d = dispService.getByNom(nom);
+		if(d==null)
+			return new ArrayList<>();
+		List<Dispositifhascompetence> list = new ArrayList<>();
+		for(Dispositifhascompetence dc : dcRep.findByDispositif(d)) {
+			list.add(dc);
+		}
+		return list;		
+	}
+	
+	public Dispositifhascompetence getByDispositifAndCompetence(String dnom, String cnom) {
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return null;
+		Dispositif d = dispService.getByNom(dnom);
+		if(d==null)
+			return null;
+		return 	dcRep.findByDispositifAndCompetence(d,c);
+	}
+
+}

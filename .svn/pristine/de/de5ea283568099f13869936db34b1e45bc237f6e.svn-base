@@ -1,0 +1,75 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+
+import com.infotel.data.dto.HistoriqueresDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.entity.Historiqueres;
+import com.infotel.repository.HistoriqueresRepository;
+
+public class HistoriqueresService {
+	
+	private final HistoriqueresRepository histRep;
+	private final RessourceService resService;
+	
+	public HistoriqueresService(HistoriqueresRepository histRep, RessourceService resService) {
+		this.histRep=histRep;this.resService=resService;
+	}
+	
+	public void clear() {
+		histRep.deleteAll();
+	}
+	
+	public void create(HistoriqueresDTO hist, String nom, String prenom) {
+		RessourceDTO res = resService.getByNomAndPrenom(nom,prenom);
+		histRep.save(hist.toEntity());
+		res.setHist(hist.toEntity());
+		resService.update(res.getId(), res);
+	}
+	
+	public ArrayList<HistoriqueresDTO> getAll(){
+		ArrayList<HistoriqueresDTO> list=new ArrayList<>();
+		for(Historiqueres d : histRep.findAll()) {
+			list.add(new HistoriqueresDTO(d));
+		}
+		return list;
+	}
+	
+	public HistoriqueresDTO getById(int id)  {
+		Historiqueres d = histRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			return new HistoriqueresDTO(d);
+		}
+	}
+	
+	public HistoriqueresDTO update(int id,HistoriqueresDTO hist)  {
+		Historiqueres d = histRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setDateentree(hist.getDateentree());
+			d.setDatesortie(hist.getDatesortie());
+			d.setIsactif(hist.isIsactif());
+			d.setIsactiveasbackup(hist.isisactiveasbackup());
+			d.setRessource(hist.getRessource());
+			Historiqueres f = histRep.save(d);
+			return new HistoriqueresDTO(f);
+		}
+	}
+	
+	public void delete(int id)  {
+		Historiqueres d = histRep.findByid(id);
+		if(d!=null)
+			histRep.delete(d);
+	}
+	
+	public HistoriqueresDTO getByRessource(String nom,String prenom)  {
+		RessourceDTO r = resService.getByNomAndPrenom(nom, prenom);
+		if(r==null)
+			return null;
+		return new HistoriqueresDTO(histRep.findByressource(r.toEntity()));
+	}	
+
+}

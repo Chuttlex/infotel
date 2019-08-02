@@ -1,0 +1,119 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.CompetenceDTO;
+import com.infotel.data.dto.DispositifDTO;
+import com.infotel.data.dto.DomaineDTO;
+import com.infotel.data.dto.EquipeDTO;
+import com.infotel.data.dto.HistoriqueresDTO;
+import com.infotel.data.dto.NiveauDTO;
+import com.infotel.data.dto.OrganismeDTO;
+import com.infotel.data.dto.RegleDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.dto.RessourcehascompetenceDTO;
+import com.infotel.data.service.OrganismeService;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data")
+public class DataGetAllController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataGetAllController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@GetMapping("/getDispositifs")
+	public ResponseEntity<?> getDispositifs(){
+		List<DispositifDTO> dispositifs = dispositifService.getAll();
+		return ResponseEntity.ok(dispositifs);
+	}
+	
+	@GetMapping("/getOrganismes")
+	public ResponseEntity<?> getOrganismes(){
+		List<OrganismeDTO> organismes = organismeService.getAll();
+		return ResponseEntity.ok(organismes);
+	}
+	
+	@GetMapping("/getEquipes")
+	public ResponseEntity<?> getEquipes(){
+		List<EquipeDTO> equipes = equipeService.getAll();
+		return ResponseEntity.ok(equipes);
+	}
+	
+	@GetMapping("/getNiveaux")
+	public ResponseEntity<?> getNiveaux(){
+		List<NiveauDTO> niveaux = niveauService.getAll();
+		return ResponseEntity.ok(niveaux);
+	}
+	
+	@GetMapping("/getRessources")
+	public ResponseEntity<?> getRessources(){
+		List<RessourceDTO> ressources = resService.getAll();
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/getHistoriques")
+	public ResponseEntity<?> getHistoriques(){
+		List<HistoriqueresDTO> hists = histService.getAll();
+		return ResponseEntity.ok(hists);
+	}
+	
+	@GetMapping("/getDomaines")
+	public ResponseEntity<?> getDomaines(){
+		List<DomaineDTO> domaines = domaineService.getAll();
+		return ResponseEntity.ok(domaines);
+	}
+	
+	@GetMapping("/getCompetences")
+	public ResponseEntity<?> getCompetencesd(){
+		List<CompetenceDTO> competences = compService.getAll();
+		return ResponseEntity.ok(competences);
+	}
+	
+	@GetMapping("/getRegles")
+	public ResponseEntity<?> getRegles(){
+		List<RegleDTO> regles = regleService.getAll();
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/getRessourcehascompetences")
+	public ResponseEntity<?> getRessourcehascompetences(){
+		List<RessourcehascompetenceDTO> rcs = rcService.getAll();
+		return ResponseEntity.ok(rcs);
+	}
+}

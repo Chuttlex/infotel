@@ -1,0 +1,367 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.dto.RegleDTO;
+import com.infotel.entity.Regle;
+import com.infotel.service.RegleService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/infotel/regle")
+public class DataGetRegleController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RegleService regleService;
+	
+	public DataGetRegleController(RegleService regleService) {
+		this.regleService=regleService;
+	}
+	
+	@GetMapping("/ByEquipeAndCompetence")
+	public ResponseEntity<?> getByEquipeAndCompetence(@RequestBody String nom, @RequestBody String cnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipeAndCompetence(nom, cnom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipe")
+	public ResponseEntity<?> getByEquipe(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipe(nom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveau")
+	public ResponseEntity<?> getByCompetenceAndNiveau(@RequestBody String cnom, @RequestBody int valeur,
+			@RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndNiveau(cnom,valeur,orgnom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByDispositif")
+	public ResponseEntity<?> getByDispositif(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByDispositif(nom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByOrganisme")
+	public ResponseEntity<?> getByOrganisme(@RequestBody String nom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByOrganisme(nom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndNiveau")
+	public ResponseEntity<?> getByEquipeAndNiveau(@RequestBody String nom, @RequestBody int valeur,
+			@RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipeAndNiveau(nom,valeur,orgnom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndCompetenceAndNiveau")
+	public ResponseEntity<?> getByEquipeAndCompetenceAndNiveau(@RequestBody String nom, @RequestBody String cnom
+			, @RequestBody int valeur,@RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		Regle regle = regleService.getByEquipeAndCompetenceAndNiveau(nom,cnom,valeur,orgnom);
+		return new ResponseEntity<>(regle.toDTO(),headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByNiveau")
+	public ResponseEntity<?> getByNiveau(@RequestBody int valeur, @RequestBody String orgnom){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByNiveau(valeur,orgnom);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByPourcentage")
+	public ResponseEntity<?> getByPourcentage(@RequestBody double pourcentage){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByPourcentage(pourcentage);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByPourcentageAndNombre")
+	public ResponseEntity<?> getByPourcentageAndNombre(@RequestBody double pourcentage, @RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByPourcentageAndNombre(pourcentage,nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndPourcentage")
+	public ResponseEntity<?> getByCompetenceAndPourcentage(@RequestBody String cnom,@RequestBody double pourcentage){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndPourcentage(cnom,pourcentage);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveauAndPourcentage")
+	public ResponseEntity<?> getByCompetenceAndNiveauAndPourcentage(@RequestBody String cnom, @RequestBody int valeur,
+			@RequestBody String orgnom,@RequestBody double pourcentage){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndNiveauAndPourcentage(cnom,valeur,orgnom,pourcentage);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndPourcentage")
+	public ResponseEntity<?> getByEquipeAndPourcentage(@RequestBody String nom,@RequestBody double pourcentage){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipeAndPourcentage(nom,pourcentage);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByNombre")
+	public ResponseEntity<?> getByNombre(@RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByNombre(nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNombre")
+	public ResponseEntity<?> getByCompetenceAndNombre(@RequestBody String nom,@RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndNombre(nom,nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndNombre")
+	public ResponseEntity<?> getByEquipeAndNombre(@RequestBody String nom,@RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipeAndNombre(nom,nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveauAndNombre")
+	public ResponseEntity<?> getByCompetenceAndNiveauAndNombre(@RequestBody String nom,@RequestBody int valeur,
+			@RequestBody String orgnom,@RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndNiveauAndNombre(nom,valeur,orgnom,nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndEquipeAndNombre")
+	public ResponseEntity<?> getByCompetenceAndEquipeAndNombre(@RequestBody String cnom,@RequestBody String enom
+			,@RequestBody int nombre){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndEquipeAndNombre(cnom,enom,nombre);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByMoyenne")
+	public ResponseEntity<?> getByMoyenne(@RequestBody boolean moyenne){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByMoyenne(moyenne);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndMoyenne")
+	public ResponseEntity<?> getByCompetenceAndMoyenne(@RequestBody String cnom,@RequestBody boolean moyenne){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndMoyenne(cnom,moyenne);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByEquipeAndMoyenne")
+	public ResponseEntity<?> getByEquipeAndMoyenne(@RequestBody String nom,@RequestBody boolean moyenne){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByEquipeAndMoyenne(nom,moyenne);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ByCompetenceAndEquipeAndMoyenne")
+	public ResponseEntity<?> getByCompetenceAndEquipeAndMoyenne(@RequestBody String cnom, @RequestBody String enom,
+			@RequestBody boolean moyenne){
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+		headers.add("Access-Control-Allow-Credentials", "true");
+		List<Regle> regles = regleService.getByCompetenceAndEquipeAndMoyenne(cnom,enom,moyenne);
+		List<RegleDTO> reglesDTO = new ArrayList<>();
+		for(Regle r : regles) {
+			reglesDTO.add(r.toDTO());
+		}
+		return new ResponseEntity<>(reglesDTO,headers,HttpStatus.OK);
+	}
+
+}

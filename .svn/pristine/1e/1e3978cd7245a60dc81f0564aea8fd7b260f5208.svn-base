@@ -1,0 +1,256 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.*;
+import com.infotel.data.service.*;
+import com.infotel.data.transfertentity.TransfertCompetence;
+import com.infotel.data.transfertentity.TransfertDispositif;
+import com.infotel.data.transfertentity.TransfertDomaine;
+import com.infotel.data.transfertentity.TransfertEquipe;
+import com.infotel.data.transfertentity.TransfertHistorique;
+import com.infotel.data.transfertentity.TransfertNiveau;
+import com.infotel.data.transfertentity.TransfertOrganisme;
+import com.infotel.data.transfertentity.TransfertRegle;
+import com.infotel.data.transfertentity.TransfertRessource;
+import com.infotel.data.transfertentity.TransfertRessourcehascompetence;
+import com.infotel.entity.Competence;
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Regle;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.service.CompetenceService;
+import com.infotel.service.DispositifService;
+import com.infotel.service.DomaineService;
+import com.infotel.service.EquipeService;
+import com.infotel.service.HistoriqueresService;
+import com.infotel.service.NiveauService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+import com.infotel.service.RessourcehascompetenceService;
+
+@RestController
+@RequestMapping("/api/data/")
+public class DataUpdateController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final DispositifService dispositifService;
+	private final OrganismeService organismeService;
+	private final EquipeService equipeService;
+	private final NiveauService niveauService;
+	private final RessourceService resService;
+	private final HistoriqueresService histService;
+	private final DomaineService domaineService;
+	private final CompetenceService compService;
+	private final RegleService regleService;
+	private final RessourcehascompetenceService rcService;
+	
+	public DataUpdateController(DispositifService dispositifService, OrganismeService orgService,EquipeService equipeService,
+			NiveauService niveauService, RessourceService resService, HistoriqueresService histService, DomaineService domaineService,
+			CompetenceService compService, RegleService regleService, RessourcehascompetenceService rcService) {
+		this.dispositifService=dispositifService;this.organismeService=orgService;this.equipeService=equipeService;
+		this.niveauService=niveauService;this.resService=resService;this.histService=histService;this.domaineService=domaineService;
+		this.compService=compService;this.regleService=regleService;this.rcService=rcService;
+	}
+	
+	@PutMapping("/updateDispositif")
+	public ResponseEntity<?> updateDispositif(@Valid @RequestBody TransfertDispositif dispositif){
+		DispositifDTO disp = dispositifService.getById(dispositif.getId());
+		OrganismeDTO org = organismeService.getByNom(dispositif.getOrganisme());
+		List<EquipeDTO> equipesDTO = equipeService.getByDispositif(dispositif.getNom());
+		List<Equipe> equipes = new ArrayList<>();
+		for(EquipeDTO e : equipesDTO) {
+			equipes.add(e.toEntity());
+		}
+		disp.setNom(dispositif.getNom());
+		disp.setDescription(dispositif.getDescription());
+		disp.setOrganisme(org.toEntity());
+		disp.setEquipes(equipes);
+		dispositifService.update(disp.getId(),disp);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateDomaine")
+	public ResponseEntity<?> updateDomaine(@Valid @RequestBody TransfertDomaine domaine){
+		DomaineDTO d = domaineService.getByNom(domaine.getValeur());
+		List<CompetenceDTO> compsDTO = compService.getByDomaine(domaine.getValeur());
+		List<Competence> comps = new ArrayList<>();
+		for(CompetenceDTO c : compsDTO) {
+			comps.add(c.toEntity());
+		}
+		d.setCompetences(comps);
+		domaineService.update(d.getId(), d);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateOrganisme")
+	public ResponseEntity<?> updateOrganisme(@Valid @RequestBody TransfertOrganisme organisme){
+		OrganismeDTO org = organismeService.getById(organisme.getId());
+		List<NiveauDTO> niveauxDTO = niveauService.getByOrganisme(organisme.getOrganisme());
+		org.setDescription(organisme.getDescription());
+		DispositifDTO disp = dispositifService.getByNom(organisme.getdispositif());
+		org.setDispositif(disp.toEntity());
+		List<Niveau> niveaux = new ArrayList<>();
+		for(NiveauDTO niveau : niveauxDTO) {
+			niveaux.add(niveau.toEntity());
+		}
+		org.setNiveaux(niveaux);
+		org.setOrganisme(organisme.getOrganisme());
+		organismeService.update(org.getId(),org);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateEquipe")
+	public ResponseEntity<?> updateEquipe(@Valid @RequestBody TransfertEquipe equipe){
+		EquipeDTO e = equipeService.getById(equipe.getId());
+		DispositifDTO disp = dispositifService.getByNom(equipe.getDispositif());
+		List<RessourceDTO> ressourcesDTO = resService.getByEquipe(equipe.getNom());
+		List<Ressource> ressources = new ArrayList<>();
+		for(RessourceDTO r : ressourcesDTO) {
+			ressources.add(r.toEntity());
+		}
+		List<RegleDTO> reglesDTO = regleService.getByEquipe(equipe.getNom());
+		List<Regle> regles = new ArrayList<>();
+		for(RegleDTO r : reglesDTO) {
+			regles.add(r.toEntity());
+		}
+		e.setNom(equipe.getNom());
+		e.setRescible(equipe.getRescible());
+		e.setDispositif(disp.toEntity());
+		e.setRessources(ressources);
+		e.setRegles(regles);
+		equipeService.update(e.getId(),e);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateNiveau")
+	public ResponseEntity<?> updateNiveau(@Valid @RequestBody TransfertNiveau niveau){
+		NiveauDTO n = niveauService.getById(niveau.getId());
+		OrganismeDTO org = organismeService.getByNom(niveau.getOrganisme());
+		n.setOrganisme(org.toEntity());
+		n.setValeur(niveau.getValue());
+		List<RegleDTO> reglesDTO = regleService.getByNiveau(niveau.getValue(), niveau.getOrganisme());
+		List<RessourcehascompetenceDTO> rcsDTO = rcService.getByNiveau(niveau.getValue(), niveau.getOrganisme());
+		List<Regle> regles = new ArrayList<>();
+		List<Ressourcehascompetence> rcs = new ArrayList<>();
+		for(RegleDTO r : reglesDTO) {
+			regles.add(r.toEntity());
+		}
+		for(RessourcehascompetenceDTO r : rcsDTO) {
+			rcs.add(r.toEntity());
+		}
+		n.setDescription(niveau.getDescription());
+		n.setRegles(regles);
+		n.setRessourcehascompetences(rcs);
+		niveauService.update(n.getId(),n);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateRessource")
+	public ResponseEntity<?> updateRessource(@Valid @RequestBody TransfertRessource ressource){
+		RessourceDTO r = resService.getById(ressource.getId());
+		EquipeDTO e = equipeService.getByNom(ressource.getEquipe());
+		HistoriqueresDTO h = histService.getByRessource(ressource.getNom(), ressource.getPrenom());
+		List<RessourcehascompetenceDTO> rcsDTO = rcService.getByRessource(ressource.getNom(), ressource.getPrenom());
+		List<Ressourcehascompetence> rcs = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcsDTO) {
+			rcs.add(rc.toEntity());
+		}
+		r.setNom(ressource.getNom());
+		r.setPrenom(ressource.getPrenom());
+		r.setReferenceclient(ressource.getReferenceClient());
+		r.setHist(h.toEntity());
+		r.setEquipe(e.toEntity());
+		r.setRessourcehascompetences(rcs);
+		resService.update(r.getId(),r);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateHistorique")
+	public ResponseEntity<?> updateHistorique(@Valid @RequestBody int id,@Valid @RequestBody TransfertHistorique hist){
+		HistoriqueresDTO h = histService.getById(hist.getId());
+		RessourceDTO r = resService.getByNomAndPrenom(hist.getResNom(), hist.getResPrenom());
+		h.setDateentree(hist.getDateentree());
+		h.setDatesortie(hist.getDatesortie());
+		h.setIsactif(hist.isActif());
+		h.setisactiveasbackup(hist.isActifAsBackUp());
+		h.setRessource(r.toEntity());
+		histService.update(h.getId(),h);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateCompetence")
+	public ResponseEntity<?> updateCompetence(@Valid @RequestBody int id, @Valid @RequestBody TransfertCompetence competence){
+		CompetenceDTO c = compService.getById(competence.getId());
+		DomaineDTO d = domaineService.getByNom(competence.getDomaine());
+		List<RessourcehascompetenceDTO> rcsDTO = rcService.getByCompetence(competence.getNom());
+		List<RegleDTO> reglesDTO = regleService.getByCompetence(c.toEntity());
+		List<Ressourcehascompetence> rcs = new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(RessourcehascompetenceDTO rc : rcsDTO) {
+			rcs.add(rc.toEntity());
+		}
+		for(RegleDTO r : reglesDTO) {
+			regles.add(r.toEntity());
+		}
+		c.setNom(competence.getNom());
+		c.setDomaine(d.toEntity());
+		c.setRegles(regles);
+		c.setRessourcehascompetences(rcs);
+		compService.update(c.getId(),c);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateRegle")
+	public ResponseEntity<?> updateRegle(@Valid @RequestBody TransfertRegle regle){
+		RegleDTO r = regleService.getById(regle.getId());
+		EquipeDTO equipe = equipeService.getByNom(regle.getEquipe());
+		CompetenceDTO comp = compService.getByNom(regle.getCompetence());
+		List<NiveauDTO> niveauxDTO = niveauService.getByOrganisme(regle.getOrganisme());
+		NiveauDTO niveau = null;
+		for(NiveauDTO n : niveauxDTO) {
+			if(n.getValeur()==regle.getNiveau())
+				niveau = n;
+		}
+		r.setMoyenne(regle.isMoyenne());
+		r.setNombre(regle.getNombre());
+		r.setPourcentage(regle.getPourcentage());
+		r.setCompetence(comp.toEntity());
+		r.setEquipe(equipe.toEntity());
+		r.setNiveau(niveau.toEntity());
+		regleService.update(r.getId(),r);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PutMapping("/updateRessourcehascompetence")
+	public ResponseEntity<?> updateRessourcehascompetence(@Valid @RequestBody TransfertRessourcehascompetence rc){
+		RessourcehascompetenceDTO rcDTO = rcService.getById(rc.getId());
+		CompetenceDTO comp = compService.getByNom(rc.getCompetence());
+		RessourceDTO res = resService.getByNomAndPrenom(rc.getResNom(), rc.getResPrenom());
+		List<NiveauDTO> niveauxDTO = niveauService.getByOrganisme(rc.getOrganisme());
+		NiveauDTO niveau = null;
+		for(NiveauDTO n : niveauxDTO) {
+			if(n.getValeur()==rc.getNiveau())
+				niveau = n;
+		}
+		rcDTO.setDateevolcomp(rc.getDateevolcomp());
+		rcDTO.setCompetence(comp.toEntity());
+		rcDTO.setNiveau(niveau.toEntity());
+		rcDTO.setRessource(res.toEntity());
+		rcService.update(rcDTO.getId(),rcDTO);
+		return ResponseEntity.ok().build();
+	}
+
+}

@@ -1,0 +1,232 @@
+package com.infotel.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.EquipeDTO;
+import com.infotel.data.dto.RegleDTO;
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.data.support.Paire;
+import com.infotel.entity.Competence;
+import com.infotel.entity.Regle;
+import com.infotel.entity.Ressource;
+import com.infotel.entity.Ressourcehascompetence;
+import com.infotel.service.EquipeService;
+import com.infotel.service.RegleService;
+import com.infotel.service.RessourceService;
+
+@RestController
+@RequestMapping("/api/data")
+public class DataCalController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final EquipeService equipeService;
+	private final RessourceService resService;
+	private final RegleService regleService;
+	
+	public DataCalController(EquipeService equipeService,RessourceService resService,RegleService regleService) {
+		this.equipeService=equipeService;
+		this.resService=resService;
+		this.regleService=regleService;;
+	}
+	
+	/**
+	 * @param enom nom de l'equipe
+	 * @see HashMap
+	 * @return un tableau contenant le niveau moyen de l'equipe pour chaque competence
+	 */
+	@GetMapping("/GetMoyenneForEquipe={enom}")
+	public ResponseEntity<?> getMoyenneForEquipe(@PathVariable("enom") String enom){
+		EquipeDTO equipe = equipeService.getByNom(enom);
+		List<Regle> regles = equipe.getRegles();
+		HashMap<String,Double> moyennes = new HashMap<>();
+		for(Regle r : regles) {
+			moyennes.put(r.getCompetence().getNom(),(double) 0);
+		}
+		List<Ressource> ressources = equipe.getRessources();
+		int count=0;
+		for(Ressource res : ressources) {
+			if(res.getHistoriqueres().getIsactif()==true) {
+				count+=1;
+				for(Regle r : regles) {
+					for(Ressourcehascompetence rc : res.getRessourcehascompetences()) {
+						if(rc.getCompetence().getNom().equals(r.getCompetence().getNom())) {
+							moyennes.put(r.getCompetence().getNom(),moyennes.get(r.getCompetence())+rc.getNiveau().getValeur());
+						}
+					}
+				}
+			}			
+		}
+		for(Regle r : regles) {
+			moyennes.put(r.getCompetence().getNom(),moyennes.get(r.getCompetence())/count);
+		}
+		return ResponseEntity.ok(moyennes);
+	}
+	
+	/**
+	 * @param nom de la ressource
+	 * @param prenom de la ressource
+	 * @see HashMap
+	 * @return un tableau contenant une liste des personnes pouvant servir de backup pour la ressource en parametre pour
+	 * une competence donnee
+	 */
+	@GetMapping("/GetBackUp={nom}&{prenom}")
+	public ResponseEntity<?> getBackUp(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom){
+		RessourceDTO ressource = resService.getByNomAndPrenom(nom, prenom);
+		EquipeDTO equipe = equipeService.getByNom(ressource.getEquipe().getNom());
+		HashMap<Competence,List<RessourceDTO>> backup = new HashMap<Competence,List<RessourceDTO>>();
+		for(Ressource r :equipe.getRessources()) {
+			if(!r.equals(ressource)) {
+				for(Ressourcehascompetence rc : ressource.getRessourcehascompetences()) {
+					for(Ressourcehascompetence rcb : r.getRessourcehascompetences()) {
+						if(rc.getCompetence().getNom().equals(rcb.getCompetence().getNom()) 
+								&& rc.getNiveau().getValeur()>=rcb.getNiveau().getValeur()
+								&& rc.getNiveau().getOrganisme().equals(rcb.getNiveau().getOrganisme())) {
+							List<RessourceDTO> ressources = backup.get(rc.getCompetence());
+							ressources.add(new RessourceDTO(r));
+							backup.put(rc.getCompetence(),ressources);
+						}
+					}
+				}
+			}
+		}
+		return ResponseEntity.ok(backup);
+	}
+	
+	/**
+	 * @param enom nom de l'equipe
+	 * @param cnom nom de la competence
+	 * @see Paire
+	 * @return true ou false si la regle est respectee
+	 */
+	@GetMapping("/GetRegleRespected={enom}&{cnom}")
+	public ResponseEntity<?> getRegleRespected(@PathVariable("enom") String enom, @PathVariable("cnom") String cnom){
+		List<RegleDTO> regles = regleService.getByEquipeAndCompetence(enom, cnom);
+		EquipeDTO equipe = equipeService.getByNom(enom);
+		List<Paire<Boolean,Integer>> results = new ArrayList<>();
+		List<Paire<RegleDTO,Boolean>> respected = new ArrayList<>();
+		results.add(new Paire<Boolean,Integer>(false,0));
+		results.add(new Paire<Boolean,Integer>(true,0));
+		for(RegleDTO r : regles) {
+			boolean moyenne = r.isMoyenne();
+			int somme = 0;
+			for(Ressource res : equipe.getRessources()) {
+				for(Ressourcehascompetence rc : res.getRessourcehascompetences()) {
+					// Compte pour la moyenne
+					if(moyenne) {
+						if(rc.getCompetence().getNom().equals(r.getCompetence().getNom())) {
+							somme+=rc.getNiveau().getValeur();
+						}
+					}
+					else {
+						// Compte le nombre de personnes respectant la règle
+						if(rc.getCompetence().getNom().equals(r.getCompetence().getNom()) 
+								&& rc.getNiveau().getValeur()>=r.getNiveau().getValeur()) {
+							results.get(1).setSecond(results.get(1).getSecond()+1);
+						}
+						else {
+							results.get(0).setSecond(results.get(0).getSecond()+1);
+						}
+					}					
+				}
+			}
+			int nombre = r.getNombre();
+			double pourcentage = r.getPourcentage();
+			// Vérifie si la règle est respectée par rapport à la moyenne
+			if(moyenne) {
+				double result = somme / equipe.getRessources().size();
+				if(result>=r.getNiveau().getValeur()) {
+					respected.add(new Paire<RegleDTO,Boolean>(r,true));
+				}
+				else {
+					respected.add(new Paire<RegleDTO,Boolean>(r,false));
+				}
+			}
+			else {
+				// Si la règle n'est pas sur la moyenne, vérifie que celle-ci est repectée
+				if(results.get(1).getSecond()>=nombre || 
+						results.get(1).getSecond()>=equipe.getRessources().size()*pourcentage) {
+					respected.add(new Paire<RegleDTO,Boolean>(r,true));
+				}
+				else {
+					respected.add(new Paire<RegleDTO,Boolean>(r,false));
+				}
+			}
+		}
+		// Vérifie que la règle est respectée
+		int count=0;
+		for(Paire<RegleDTO,Boolean> paire : respected) {
+			if(paire.getSecond())
+				count+=1;
+		}
+		if(count==respected.size()) {
+			return ResponseEntity.ok(true);
+		}
+		else {
+			return ResponseEntity.ok(false);
+		}
+	}
+	
+	/**
+	 * @param enom nom de l'equipe
+	 * @param cnom nom de la compétence
+	 * @see HashMap
+	 * @see Paire
+	 * @return tableau Regle-Paire, chaque paire contenant si la regle a une moyenne, la valeur cible et la valeur
+	 réelle atteinte sinon le nombre de personnes ne respectant pas la regle et le nombre de personnes la respectant
+	 */
+	@GetMapping("/HowMany={enom}&{cnom}")
+	public ResponseEntity<?> howMany(@PathVariable("enom") String enom, @PathVariable("cnom") String cnom){
+		List<RegleDTO> regles = regleService.getByEquipeAndCompetence(enom, cnom);
+		EquipeDTO equipe = equipeService.getByNom(enom);
+		List<Paire<Boolean,Integer>> results = new ArrayList<>();
+		results.add(new Paire<Boolean,Integer>(false,0));
+		results.add(new Paire<Boolean,Integer>(true,0));
+		HashMap<RegleDTO,Paire<Double,Double>> finals = new HashMap<>();
+		for(RegleDTO r : regles) {
+			boolean moyenne = r.isMoyenne();
+			int somme = 0;
+			for(Ressource res : equipe.getRessources()) {
+				for(Ressourcehascompetence rc : res.getRessourcehascompetences()) {
+					// Compte pour la moyenne
+					if(moyenne) {
+						if(rc.getCompetence().getNom().equals(r.getCompetence().getNom())) {
+							somme+=rc.getNiveau().getValeur();
+						}
+					}
+					else {
+						// Compte le nombre de personnes respectant la règle
+						if(rc.getCompetence().getNom().equals(r.getCompetence().getNom()) 
+								&& rc.getNiveau().getValeur()>=r.getNiveau().getValeur()) {
+							results.get(1).setSecond(results.get(1).getSecond()+1);
+						}
+						else {
+							results.get(0).setSecond(results.get(0).getSecond()+1);
+						}
+					}					
+				}
+			}
+			if(moyenne) {
+				// (cible,result)
+				finals.put(r, new Paire<Double,Double>((double)r.getNiveau().getValeur(),(double)(somme/equipe.getRessources().size())));
+			}else {
+				// (false,true)
+				finals.put(r, new Paire<Double,Double>((double)results.get(0).getSecond(),(double)results.get(1).getSecond()));
+			}
+		}
+		return ResponseEntity.ok(finals);
+	}
+
+}

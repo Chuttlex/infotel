@@ -1,0 +1,412 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.infotel.entity.Competence;
+import com.infotel.entity.Dispositif;
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Niveau;
+import com.infotel.entity.Organisme;
+import com.infotel.entity.Regle;
+import com.infotel.repository.RegleRepository;
+
+public class RegleService {
+	
+	private final RegleRepository regleRep;
+	private final EquipeService equipeService;
+	private final CompetenceService compService;
+	private final NiveauService niveauService;
+	
+	public RegleService(RegleRepository regleRep, EquipeService equipeService, CompetenceService compService, NiveauService niveauService) {
+		this.regleRep=regleRep;this.equipeService=equipeService;this.compService=compService;this.niveauService=niveauService;
+	}
+	
+	public void clear() {
+		regleRep.deleteAll();
+	}
+	
+	public void create(Regle regle,String equipeNom, String compNom, String orgNom,int niveau) {
+		regleRep.save(regle);
+		Equipe equipe = equipeService.getByNom(equipeNom);
+		Competence comp = compService.getByNom(compNom);
+		Niveau n = niveauService.getOrganismeService().getByNom(orgNom).getNiveaus().get(niveau);
+		List<Regle> reglesE=equipe.getRegles();
+		List<Regle> reglesC=comp.getRegles();
+		List<Regle> reglesN=n.getRegles();
+		reglesE.add(regle);reglesC.add(regle);reglesN.add(regle);
+		equipe.setRegles(reglesE);comp.setRegles(reglesC);n.setRegles(reglesN);
+		equipeService.update(equipe.getId(), equipe);
+		compService.update(comp.getId(), comp);
+		niveauService.update(n.getId(), n);
+	}
+	
+	public ArrayList<Regle> getAll(){
+		return regleRep.findAll();
+	}
+	
+	public Regle getById(int id)  {
+		return regleRep.findByid(id);
+	}
+	
+	public Regle update(int id,Regle disp)  {
+		Regle d = regleRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setEquipe(disp.getEquipe());
+			d.setCompetence(disp.getCompetence());
+			d.setMoyenne(disp.getMoyenne());
+			d.setNiveau(disp.getNiveau());
+			d.setNombre(disp.getNombre());
+			d.setPourcentage(disp.getPourcentage());
+			Regle f = regleRep.save(d);
+			return f;
+		}
+	}
+	
+	public void delete(int id)  {
+		Regle d = regleRep.findByid(id);
+		if(d!=null)
+			regleRep.delete(d);
+	}
+
+	public Equipe getEquipeByNom(String nom) {
+		return equipeService.getByNom(nom);
+	}
+
+	public Competence getCompetenceByNom(String cnom) {
+		return compService.getByNom(cnom);
+	}
+
+	public List<Regle> getByEquipeAndCompetence(Equipe e, Competence c) {
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndCompetence(e, c)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByEquipe(Equipe equipe) {
+		List<Regle> list = new ArrayList<>();
+		for(Regle r : regleRep.findByequipe(equipe)) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	public List<Regle> getByEquipeAndCompetence(String nom,String cnom) {
+		Equipe e = equipeService.getByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Regle> list = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndCompetence(e, c)) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	// A appliquer sur plusieurs niveaux si on veut les Regles supérieur à un niveau
+	public List<Regle> getByCompetenceAndNiveau(Competence c, Niveau n) {
+		List<Regle> list = new ArrayList<>();
+		for(Regle r : regleRep.findByNiveauAndCompetence(n, c)) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	public List<Regle> getByCompetence(Competence comp) {
+		List<Regle> list = new ArrayList<>();
+		for(Regle r : regleRep.findBycompetence(comp)) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	public List<Regle> getByEquipeAndNiveau(String nom,int valeur,String orgNom) {
+		Equipe e = equipeService.getByNom(nom);
+		if(e==null)
+			return new ArrayList<>();
+		Organisme org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<Regle> list = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndNiveau(e,n)) {
+			list.add(r);
+		}
+		return list;
+	}
+
+	public Regle getByEquipeAndCompetenceAndNiveau(String nom,String cnom,int valeur,String orgNom) {
+		Equipe e = equipeService.getByNom(nom);
+		if(e==null)
+			return new Regle();
+		Organisme org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new Regle();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new Regle();
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new Regle();
+		return regleRep.findByEquipeAndCompetenceAndNiveau(e, c, n);
+		}
+
+	public List<Regle> getByOrganisme(String orgNom) {
+		Organisme org = niveauService.getOrganismeService().getByNom(orgNom);
+		if(org==null)
+			return new ArrayList<>();
+		List<Regle> list = new ArrayList<>();
+		for(Niveau n : org.getNiveaus()) {
+			for(Regle r : n.getRegles()) {
+				list.add(r);
+			}
+		}
+		return list;
+	}
+
+	public List<Regle> getByDispositif(String nom) {
+		Dispositif d = equipeService.getDispositifService().getByNom(nom);
+		if(d==null)
+			return new ArrayList<>();
+		List<Regle> list = new ArrayList<>();
+		for(Equipe e : d.getEquipes()) {
+			for(Regle r : e.getRegles()) {
+				list.add(r);
+			}
+		}
+		return list;
+	}
+
+	public EquipeService getEquipeService() {
+		return this.equipeService;
+	}
+
+	public NiveauService getNiveauService() {
+		return this.niveauService;
+	}
+
+	public List<Regle> getByEquipeAndNiveau(Equipe equipe, Niveau n) {
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndNiveau(equipe, n)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+
+	public List<Regle> getByNiveau(Niveau n) {
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByniveau(n)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByPourcentage(Double pourcentage){
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByPourcentage(pourcentage)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByPourcentageAndNombre(Double pourcentage,int nombre){
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByPourcentageAndNombre(pourcentage,nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndPourcentage(String cnom,Double pourcentage){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndPourcentage(c,pourcentage)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndNiveauAndPourcentage(String cnom,int valeur,String orgnom,Double pourcentage){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		Organisme org = niveauService.getOrganismeService().getByNom(orgnom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndNiveauAndPourcentage(c,n,pourcentage)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByEquipeAndPourcentage(String nom,Double pourcentage){
+		Equipe equipe = equipeService.getByNom(nom);
+		if(equipe==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndPourcentage(equipe,pourcentage)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByNombre(int nombre){
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByNombre(nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndNombre(String cnom,int nombre){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndNombre(c,nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByEquipeAndNombre(String nom,int nombre){
+		Equipe equipe = equipeService.getByNom(nom);
+		if(equipe==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndNombre(equipe,nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndNiveauAndNombre(String cnom,int valeur,String orgnom,int nombre){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		Organisme org = niveauService.getOrganismeService().getByNom(orgnom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndNiveauAndNombre(c,n,nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndEquipeAndNombre(String cnom,String enom,int nombre){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		Equipe equipe = equipeService.getByNom(enom);
+		if(equipe==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndEquipeAndNombre(c,equipe,nombre)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByMoyenne(boolean moyenne){
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByMoyenne(moyenne)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndMoyenne(String cnom,boolean moyenne){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndMoyenne(c,moyenne)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByEquipeAndMoyenne(String nom,boolean moyenne){
+		Equipe equipe = equipeService.getByNom(nom);
+		if(equipe==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByEquipeAndMoyenne(equipe,moyenne)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+	
+	public List<Regle> getByCompetenceAndEquipeAndMoyenne(String cnom,String enom,boolean moyenne){
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		Equipe equipe = equipeService.getByNom(enom);
+		if(equipe==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByCompetenceAndEquipeAndMoyenne(c,equipe,moyenne)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+
+	public List<Regle> getByEquipe(String nom) {
+		List<Regle> regles = new ArrayList<>();
+		Equipe equipe = equipeService.getByNom(nom);
+		if(equipe==null)
+			return new ArrayList<>();
+		for(Regle r : equipe.getRegles()) {
+			regles.add(r);
+		}
+		return regles;
+	}
+
+	public List<Regle> getByCompetenceAndNiveau(String cnom, int valeur, String orgnom) {
+		Organisme org = niveauService.getOrganismeService().getByNom(orgnom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		Competence c = compService.getByNom(cnom);
+		if(c==null)
+			return new ArrayList<>();
+		List<Regle> regles = new ArrayList<>();
+		for(Regle r : regleRep.findByNiveauAndCompetence(n, c)) {
+			regles.add(r);
+		}
+		return regles;
+	}
+
+	public List<Regle> getByNiveau(int valeur, String orgnom) {
+		Organisme org = niveauService.getOrganismeService().getByNom(orgnom);
+		if(org==null)
+			return new ArrayList<>();
+		Niveau n = org.getNiveaus().get(valeur);
+		if(n==null)
+			return new ArrayList<>();
+		return this.getByNiveau(n);
+	}
+	
+	
+
+}

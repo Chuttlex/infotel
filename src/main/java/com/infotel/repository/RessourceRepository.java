@@ -1,0 +1,18 @@
+package com.infotel.repository;
+
+import java.util.ArrayList;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.infotel.entity.Equipe;
+import com.infotel.entity.Ressource;
+
+@Repository
+public interface RessourceRepository extends CrudRepository<Ressource, Integer> {
+	ArrayList<Ressource> findByequipe(Equipe equipe);
+	ArrayList<Ressource> findAll();
+	ArrayList<Ressource> findByNomAndPrenom(String nom,String prenom);
+	Ressource findByid(int id);
+	Ressource findByreferenceclient(int reference);
+	Ressource findByNomAndPrenomAndEquipe(String nom, String prenom, Equipe equipe);
+}

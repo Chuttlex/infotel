@@ -1,0 +1,89 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.infotel.dto.DispositifDTO;
+import com.infotel.dto.NiveauDTO;
+import com.infotel.dto.OrganismeDTO;
+import com.infotel.entity.Organisme;
+import com.infotel.repository.OrganismeRepository;
+import com.infotel.service.DispositifService;
+import com.infotel.service.NiveauService;
+
+public class OrganismeService {
+	
+	private final OrganismeRepository orgRep;
+	private final DispositifService dispService;
+	private final NiveauService niveauService;
+	
+	public OrganismeService(OrganismeRepository orgRep, DispositifService dispService, NiveauService niveauService) {
+		this.orgRep=orgRep;this.dispService=dispService;this.niveauService=niveauService;
+	}
+	
+	public void clear() {
+		orgRep.deleteAll();
+	}
+	
+	public void create(OrganismeDTO org,String nom) {
+		DispositifDTO disp=dispService.getByNom(nom);
+		orgRep.save(org.toEntity());
+		disp.setOrganisme(org.toEntity());
+		dispService.update(disp.getId(), disp);
+	}
+	
+	public ArrayList<OrganismeDTO> getAll(){
+		ArrayList<OrganismeDTO> list=new ArrayList<>();
+		for(Organisme d : orgRep.findAll()) {
+			list.add(new OrganismeDTO(d));
+		}
+		return list;
+	}
+	
+	public OrganismeDTO getById(int id) {
+		return new OrganismeDTO(orgRep.findByid(id));
+	}
+	
+	public OrganismeDTO getByNom(String nom) {
+		return new OrganismeDTO(orgRep.findByorganisme(nom));
+	}
+	
+	public OrganismeDTO getByDispositif(String nom)  {
+		DispositifDTO d = dispService.getByNom(nom);
+		if(d==null)
+			return null;
+		return new OrganismeDTO(orgRep.findBydispositif(d.toEntity()));
+	}
+
+	public List<OrganismeDTO> getByNiveau(int niveau) {
+		List<NiveauDTO> niveaux = niveauService.getByValeur(niveau);
+		if(niveaux==null)
+			return new ArrayList<>();
+		List<OrganismeDTO> organismes=new ArrayList<>();
+		for(NiveauDTO n : niveaux) {
+			organismes.add(new OrganismeDTO(n.getOrganisme()));
+		}
+		return organismes;
+	}
+	
+	public OrganismeDTO update(int id,OrganismeDTO disp)  {
+		Organisme d = orgRep.findByid(id);
+		if(d==null)
+			return null;
+		else {
+			d.setDescription(disp.getDescription());
+			d.setDispositif(disp.getDispositif());
+			d.setNiveaus(disp.getNiveaux());
+			d.setOrganisme(disp.getOrganisme());
+			Organisme f = orgRep.save(d);
+			return new OrganismeDTO(f);
+		}
+	}
+	
+	public void delete(int id) {
+		Organisme d = orgRep.findByid(id);
+		if(d!=null)
+			orgRep.delete(d);
+	}
+
+}

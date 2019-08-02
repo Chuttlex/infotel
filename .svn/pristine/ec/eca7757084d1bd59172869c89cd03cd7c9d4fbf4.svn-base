@@ -1,0 +1,91 @@
+package com.infotel.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.infotel.service.OrganismeService;
+import com.infotel.entity.Dispositif;
+import com.infotel.entity.Domaine;
+import com.infotel.entity.Niveau;
+import com.infotel.repository.DispositifRepository;
+
+@Service
+@Transactional
+public class DispositifService {
+	
+	private final Logger log = LoggerFactory.getLogger(DispositifService.class);
+	
+	// Définition des repository
+		private final DispositifRepository dispRep;	
+		private final OrganismeService orgService;		
+		private final DomaineService domaineService;
+		
+		public DispositifService(DispositifRepository dispRep,EquipeService equipeService,OrganismeService orgService,
+				NiveauService niveauService,RessourceService resService,HistoriqueresService histService,DomaineService domaineService,
+				CompetenceService compService,RegleService regleService,RessourcehascompetenceService resCompService) {
+			this.dispRep=dispRep;this.orgService=orgService;this.domaineService=domaineService;
+		}
+		
+		public void initialize(){
+			//nettoyage pour le test
+			domaineService.clear();
+			//
+			System.out.println("Initialisation démarre");
+			Domaine d=new Domaine("Technique");
+			domaineService.create(d);
+			Domaine d2 = new Domaine("Fonctionnel");
+			Domaine d3 = new Domaine("Exploitation");
+			domaineService.create(d2);
+			domaineService.create(d3);
+		}
+		
+		public Dispositif create(Dispositif disp) {
+			return dispRep.save(disp);
+		}
+
+		public ArrayList<Dispositif> getAll(){
+			return dispRep.findAll();
+		}
+
+		public Dispositif getById(int id)  {
+			return dispRep.findByid(id);
+		}
+
+		public Dispositif update(int id,Dispositif disp)  {
+			Dispositif d = dispRep.findByid(id);
+			if(d==null)
+				return null;
+			else {
+				d.setEquipes(disp.getEquipes());
+				d.setNom(disp.getNom());
+				d.setOrganisme(disp.getOrganisme());
+				Dispositif f = dispRep.save(d);
+				return f;
+			}
+		}
+		
+		public void delete(int id)  {
+			Dispositif d = dispRep.findByid(id);
+			if(d!=null)
+				 dispRep.delete(d);
+		}
+
+		public Dispositif getByNom(String nom) {
+			return dispRep.findBynom(nom);
+		}
+
+		public OrganismeService getOrganismeService() {
+			return this.orgService;
+		}
+
+		public void clear() {
+			dispRep.deleteAll();		
+		}
+	}
+

@@ -1,0 +1,169 @@
+package com.infotel.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.RegleDTO;
+import com.infotel.service.RegleService;
+
+@RestController
+@RequestMapping("/api/data/regle")
+public class DataGetRegleController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RegleService regleService;
+	
+	public DataGetRegleController(RegleService regleService) {
+		this.regleService=regleService;
+	}
+	
+	@GetMapping("/ByEquipeAndCompetence={enom}&{nom}")
+	public ResponseEntity<?> getByEquipeAndCompetence(@PathVariable("enom") String nom, @PathVariable("nom") String cnom){
+		List<RegleDTO> regles = regleService.getByEquipeAndCompetence(nom, cnom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipe={nom}")
+	public ResponseEntity<?> getByEquipe(@PathVariable("nom") String nom){
+		List<RegleDTO> regles = regleService.getByEquipe(nom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveau={nom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByCompetenceAndNiveau(@PathVariable("nom") String cnom, @PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom){
+		List<RegleDTO> regles = regleService.getByCompetenceAndNiveau(cnom,valeur,orgnom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByDispositif={nom}")
+	public ResponseEntity<?> getByDispositif(@PathVariable("nom") String nom){
+		List<RegleDTO> regles = regleService.getByDispositif(nom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByOrganisme={nom}")
+	public ResponseEntity<?> getByOrganisme(@PathVariable("nom") String nom){
+		List<RegleDTO> regles = regleService.getByOrganisme(nom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipeAndNiveau={enom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByEquipeAndNiveau(@PathVariable("enom") String nom, @PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom){
+		List<RegleDTO> regles = regleService.getByEquipeAndNiveau(nom,valeur,orgnom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipeAndCompetenceAndNiveau={enom}&{nom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByEquipeAndCompetenceAndNiveau(@PathVariable("enom") String nom, @PathVariable("nom") String cnom
+			, @PathVariable("niveau") int valeur,@PathVariable("orgnom") String orgnom){
+		RegleDTO regle = regleService.getByEquipeAndCompetenceAndNiveau(nom,cnom,valeur,orgnom);
+		return ResponseEntity.ok(regle);
+	}
+	
+	@GetMapping("/ByNiveau={niveau}&{orgnom}")
+	public ResponseEntity<?> getByNiveau(@PathVariable("niveau") int valeur, @PathVariable("orgnom") String orgnom){
+		List<RegleDTO> regles = regleService.getByNiveau(valeur,orgnom);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByPourcentage={pourcentage}")
+	public ResponseEntity<?> getByPourcentage(@PathVariable("pourcentage") double pourcentage){
+		List<RegleDTO> regles = regleService.getByPourcentage(pourcentage);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByPourcentageAndNombre={pourcentage}&{nombre}")
+	public ResponseEntity<?> getByPourcentageAndNombre(@PathVariable("pourcentage") double pourcentage, @PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByPourcentageAndNombre(pourcentage,nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndPourcentage={nom}&{pourcentage}")
+	public ResponseEntity<?> getByCompetenceAndPourcentage(@PathVariable("nom") String cnom,@PathVariable("pourcentage") double pourcentage){
+		List<RegleDTO> regles = regleService.getByCompetenceAndPourcentage(cnom,pourcentage);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveauAndPourcentage={nom}&{niveau}&{orgnom}&{pourcentage}")
+	public ResponseEntity<?> getByCompetenceAndNiveauAndPourcentage(@PathVariable("nom") String cnom, @PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom,@PathVariable("pourcentage") double pourcentage){
+		List<RegleDTO> regles = regleService.getByCompetenceAndNiveauAndPourcentage(cnom,valeur,orgnom,pourcentage);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipeAndPourcentage={nom}&{pourcentage}")
+	public ResponseEntity<?> getByEquipeAndPourcentage(@PathVariable("nom") String nom,@PathVariable("pourcentage") double pourcentage){
+		List<RegleDTO> regles = regleService.getByEquipeAndPourcentage(nom,pourcentage);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByNombre={nombre}")
+	public ResponseEntity<?> getByNombre(@PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByNombre(nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndNombre={nom}&{nombre}")
+	public ResponseEntity<?> getByCompetenceAndNombre(@PathVariable("nom") String nom,@PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByCompetenceAndNombre(nom,nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipeAndNombre={nom}&{nombre}")
+	public ResponseEntity<?> getByEquipeAndNombre(@PathVariable("nom") String nom,@PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByEquipeAndNombre(nom,nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveauAndNombre={nom}&{niveau}&{orgnom}&{nombre}")
+	public ResponseEntity<?> getByCompetenceAndNiveauAndNombre(@PathVariable("nom") String nom,@PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom,@PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByCompetenceAndNiveauAndNombre(nom,valeur,orgnom,nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndEquipeAndNombre={cnom}&{enom}&{nombre}")
+	public ResponseEntity<?> getByCompetenceAndEquipeAndNombre(@PathVariable("cnom") String cnom,@PathVariable("enom") String enom
+			,@PathVariable("nombre") int nombre){
+		List<RegleDTO> regles = regleService.getByCompetenceAndEquipeAndNombre(cnom,enom,nombre);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByMoyenne={moyenne}")
+	public ResponseEntity<?> getByMoyenne(@PathVariable("moyenne") boolean moyenne){
+		List<RegleDTO> regles = regleService.getByMoyenne(moyenne);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndMoyenne={nom}&{moyenne}")
+	public ResponseEntity<?> getByCompetenceAndMoyenne(@PathVariable("nom") String cnom,@PathVariable("moyenne") boolean moyenne){
+		List<RegleDTO> regles = regleService.getByCompetenceAndMoyenne(cnom,moyenne);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByEquipeAndMoyenne={nom}&{moyenne}")
+	public ResponseEntity<?> getByEquipeAndMoyenne(@PathVariable("nom") String nom,@PathVariable("moyenne") boolean moyenne){
+		List<RegleDTO> regles = regleService.getByEquipeAndMoyenne(nom,moyenne);
+		return ResponseEntity.ok(regles);
+	}
+	
+	@GetMapping("/ByCompetenceAndEquipeAndMoyenne={cnom}&{enom}&{moyenne}")
+	public ResponseEntity<?> getByCompetenceAndEquipeAndMoyenne(@PathVariable("cnom") String cnom, @PathVariable("enom") String enom,
+			@PathVariable("moyenne") boolean moyenne){
+		List<RegleDTO> regles = regleService.getByCompetenceAndEquipeAndMoyenne(cnom,enom,moyenne);
+		return ResponseEntity.ok(regles);
+	}
+
+}

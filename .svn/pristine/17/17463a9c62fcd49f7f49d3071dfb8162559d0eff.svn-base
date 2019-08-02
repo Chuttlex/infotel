@@ -1,0 +1,86 @@
+package com.infotel.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.infotel.data.dto.RessourceDTO;
+import com.infotel.service.RessourceService;
+
+@RestController
+@RequestMapping("/api/data/Ressource")
+public class DataGetRessourceController {
+	
+	private final Logger log = LoggerFactory.getLogger(DataCreateController.class);
+	private final RessourceService resService;
+	
+	public DataGetRessourceController(RessourceService resService) {
+		this.resService=resService;
+	}
+	
+	@GetMapping("/ByNomAndPrenom={nom}&{prenom}")
+	public ResponseEntity<?> getByNomAndPrenom(@PathVariable("nom") String nom,@PathVariable("prenom") String prenom){
+		RessourceDTO ressource = resService.getByNomAndPrenom(nom,prenom);
+		return ResponseEntity.ok(ressource);
+	}
+	
+	@GetMapping("/ByEquipe={nom}")
+	public ResponseEntity<?> getByEquipe(@PathVariable("nom") String nom){
+		List<RessourceDTO> ressources = resService.getByEquipe(nom);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByCompetenceAndNiveau={nom}&{niveau}&{orgnom}")
+	public ResponseEntity<?> getByCompetenceAndNiveau(@PathVariable("nom") String cnom,@PathVariable("niveau") int valeur,
+			@PathVariable("orgnom") String orgnom){
+		List<RessourceDTO> ressources = resService.getByCompetenceAndNiveau(cnom,valeur,orgnom);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByCompetence={nom}")
+	public ResponseEntity<?> getByCompetence(@PathVariable("nom") String cnom){
+		List<RessourceDTO> ressources = resService.getByCompetence(cnom);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByNiveau={niveau}&{orgnom}")
+	public ResponseEntity<?> getByNiveau(@PathVariable("niveau") int valeur,@PathVariable("orgnom") String orgnom){
+		List<RessourceDTO> ressources = resService.getByNiveau(valeur,orgnom);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByIsActif={actif}")
+	public ResponseEntity<?> getByIsActif(@PathVariable("actif") boolean actif){
+		List<RessourceDTO> ressources = resService.getByIsActif(actif);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByIsActifAsBackUp={actif}")
+	public ResponseEntity<?> getByIsActifAsBackUp(@PathVariable("actif") boolean actif){
+		List<RessourceDTO> ressources = resService.getByIsActifAsBackUp(actif);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByDateentree={date}")
+	public ResponseEntity<?> getByDateEntree(@PathVariable("date") Date date){
+		List<RessourceDTO> ressources = resService.getByDateentree(date);
+		return ResponseEntity.ok(ressources);
+	}
+	
+	@GetMapping("/ByDatesortie={date}")
+	public ResponseEntity<?> getByDateSortie(@PathVariable("date") Date date){
+		List<RessourceDTO> ressources = resService.getByDatesortie(date);
+		return ResponseEntity.ok(ressources);
+	}
+
+}
