@@ -140,7 +140,7 @@ public class Ressource implements Serializable {
 	}
 
 	public RessourceDTO toDTO() {
-		RessourceDTO r = new RessourceDTO(nom, prenom, referenceclient, getEquipe().getNom());
+		RessourceDTO r = new RessourceDTO(nom, prenom, referenceclient, equipe.getNom());
 		r.setId(id);
 		return r;
 	}
