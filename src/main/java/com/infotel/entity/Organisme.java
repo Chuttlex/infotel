@@ -31,13 +31,13 @@ public class Organisme implements Serializable {
 	private String organisme;
 
 	//bi-directional many-to-one association to Niveau
-	@OneToMany(mappedBy="organisme")
+	@OneToMany(mappedBy="organisme", cascade = CascadeType.ALL)
 	private List<Niveau> niveaus= new ArrayList<>();
 
 	//bi-directional many-to-one association to Dispositif
 	//old @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	//old @JoinColumn(name="iddispositif", nullable=true,referencedColumnName="id")
-	@OneToMany(mappedBy="organisme")
+	@OneToMany(mappedBy="organisme", cascade = CascadeType.ALL)
 	private List<Dispositif> dispositifs;
 
 	public Organisme() {

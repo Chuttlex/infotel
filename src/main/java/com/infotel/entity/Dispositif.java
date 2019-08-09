@@ -37,7 +37,7 @@ public class Dispositif implements Serializable {
 
 	//bi-directional many-to-one association to Organisme
 	//old @OneToOne(mappedBy="dispositif")
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idorganisme", nullable=true,referencedColumnName="id")
 	private Organisme organisme;
 	

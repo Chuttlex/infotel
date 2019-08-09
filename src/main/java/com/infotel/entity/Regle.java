@@ -30,17 +30,17 @@ public class Regle implements Serializable {
 	private double pourcentage;
 
 	//bi-directional many-to-one association to Competence
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idcompetence", nullable=false)
 	private Competence competence;
 
 	//bi-directional many-to-one association to Equipe
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idequipe", nullable=false)
 	private Equipe equipe;
 
 	//bi-directional many-to-one association to Niveau
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idniveau", nullable=false)
 	private Niveau niveau;
 

@@ -22,12 +22,12 @@ public class Dispositifhascompetence implements Serializable {
 	private DispositifhascompetencePK id;
 
 	//bi-directional many-to-one association to Competence
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idcompetence", nullable=false, insertable=false, updatable=false)
 	private Competence competence;
 
 	//bi-directional many-to-one association to Ressource
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="iddispositif", nullable=false, insertable=false, updatable=false)
 	private Dispositif dispositif;
 
